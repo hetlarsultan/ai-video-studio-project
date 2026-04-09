@@ -98,6 +98,13 @@ function vitePluginManusDebugCollector(): Plugin {
     },
 
     configureServer(server: ViteDevServer) {
+      // Add COOP and COEP headers for SharedArrayBuffer support
+      server.middlewares.use((req, res, next) => {
+        res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+        res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+        next();
+      });
+
       // POST /__manus__/logs: Browser sends logs (written directly to files)
       server.middlewares.use("/__manus__/logs", (req, res, next) => {
         if (req.method !== "POST") {

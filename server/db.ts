@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, templates, projects, type InsertProject } from "../drizzle/schema";
+import { desc, sql } from "drizzle-orm";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +90,62 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getTemplates() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(templates).orderBy(desc(templates.createdAt));
+}
+
+export async function getTemplateById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const results = await db.select().from(templates).where(eq(templates.id, id)).limit(1);
+  return results[0] || null;
+}
+
+export async function incrementTemplateUsage(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  return db.update(templates)
+    .set({ usageCount: sql`${templates.usageCount} + 1` })
+    .where(eq(templates.id, id));
+}
+
+export async function insertTemplate(template: typeof templates.$inferInsert) {
+  const db = await getDb();
+  if (!db) return;
+  return db.insert(templates).values(template);
+}
+
+// Projects functions
+export async function createProject(project: InsertProject) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(projects).values(project);
+  return result;
+}
+
+export async function getProjectsByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(projects).where(eq(projects.userId, userId)).orderBy(desc(projects.updatedAt));
+}
+
+export async function getProjectById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const results = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+  return results[0] || null;
+}
+
+export async function updateProject(id: number, data: Partial<InsertProject>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.update(projects).set(data).where(eq(projects.id, id));
+}
+
+export async function deleteProject(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.delete(projects).where(eq(projects.id, id));
+}

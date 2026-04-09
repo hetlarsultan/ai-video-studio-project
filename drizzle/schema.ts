@@ -25,4 +25,36 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+export const templates = mysqlTable("templates", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  thumbnailUrl: varchar("thumbnailUrl", { length: 512 }),
+  category: varchar("category", { length: 100 }).default("general").notNull(),
+  // Configuration stored as JSON string
+  config: text("config").notNull(),
+  isPremium: int("isPremium").default(0).notNull(), // 0 for free, 1 for premium
+  usageCount: int("usageCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Template = typeof templates.$inferSelect;
+export type InsertTemplate = typeof templates.$inferInsert;
+// Video Projects table
+export const projects = mysqlTable("projects", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  thumbnailUrl: varchar("thumbnailUrl", { length: 512 }),
+  status: mysqlEnum("status", ["draft", "processing", "completed", "archived"]).default("draft").notNull(),
+  duration: int("duration").default(0).notNull(),
+  videoUrl: varchar("videoUrl", { length: 512 }),
+  clipsData: text("clipsData"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Project = typeof projects.$inferSelect;
+export type InsertProject = typeof projects.$inferInsert;
