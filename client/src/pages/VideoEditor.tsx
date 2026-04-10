@@ -29,6 +29,7 @@ import {
 import { useLocation, useRoute } from 'wouter';
 import DashboardLayout from '@/components/DashboardLayout';
 import { VideoUploader } from '@/components/VideoUploader';
+import { DownloadButton } from '@/components/DownloadButton';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 
@@ -274,6 +275,9 @@ export default function VideoEditor() {
                 <Download className="w-4 h-4" />
                 تصدير الفيديو
               </Button>
+              <DownloadButton
+                projectName={projectQuery.data.project?.title || 'video'}
+              />
             </div>
           </div>
         </div>
