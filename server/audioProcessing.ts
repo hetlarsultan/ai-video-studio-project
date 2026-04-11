@@ -48,7 +48,7 @@ export function createAudioConfig(
  */
 export function createAudioSyncTimeline(
   videoDuration: number,
-  audioUrl: string
+  _audioUrl: string
 ): AudioSyncPoint[] {
   const syncPoints: AudioSyncPoint[] = [];
 
@@ -203,8 +203,8 @@ export function generateAudioCompressionFilter(
  * Create audio reverb effect
  */
 export function generateAudioReverbEffect(
-  roomSize: number = 0.5,
-  damping: number = 0.5
+  _roomSize: number = 0.5,
+  _damping: number = 0.5
 ): string {
   return `aecho=0.8:0.9:500:0.3`;
 }

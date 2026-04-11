@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, Download, Star } from 'lucide-react';
+import { AlertCircle, Star } from 'lucide-react';
 
 interface TemplateItemProps {
   template: {
@@ -153,7 +153,7 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({ onTemplateSele
               {templates.map((template) => (
                 <TemplateItem
                   key={template.id}
-                  template={template}
+                  template={{ ...template, isPremium: false }}
                   onSelect={handleTemplateSelect}
                 />
               ))}
@@ -175,7 +175,7 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({ onTemplateSele
               {popularTemplates.map((template) => (
                 <TemplateItem
                   key={template.id}
-                  template={template}
+                  template={{ ...template, isPremium: false }}
                   onSelect={handleTemplateSelect}
                 />
               ))}

@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { FFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import { useRef, useState } from 'react';
+import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { toast } from 'sonner';
 
 export interface FFmpegProgress {
@@ -59,7 +59,7 @@ export function useFFmpeg() {
     outputFormat: string = 'mp4',
     options?: Record<string, any>
   ): Promise<Blob | null> => {
-    if (!ffmpegRef.current?.isLoaded()) {
+    if (!ffmpegRef.current?.loaded) {
       toast.error('FFmpeg غير محمل');
       return null;
     }
@@ -72,7 +72,8 @@ export function useFFmpeg() {
       setProgress({ progress: 0, status: 'جاري تحميل الملف...' });
 
       // كتابة الملف المدخل
-      await ffmpeg.writeFile(inputName, await fetchFile(inputFile));
+      const inputData = await inputFile.arrayBuffer();
+      await ffmpeg.writeFile(inputName, new Uint8Array(inputData));
 
       setProgress({ progress: 20, status: 'جاري معالجة الفيديو...' });
 
@@ -95,7 +96,7 @@ export function useFFmpeg() {
 
       // قراءة الملف المخرج
       const data = await ffmpeg.readFile(outputName);
-      const blob = new Blob([data], { type: `video/${outputFormat}` });
+      const blob = new Blob([new Uint8Array(data as any)], { type: `video/${outputFormat}` });
 
       // تنظيف الملفات
       await ffmpeg.deleteFile(inputName);
@@ -114,7 +115,7 @@ export function useFFmpeg() {
 
   // دمج الفيديوهات
   const mergeVideos = async (files: File[]): Promise<Blob | null> => {
-    if (!ffmpegRef.current?.isLoaded()) {
+    if (!ffmpegRef.current?.loaded) {
       toast.error('FFmpeg غير محمل');
       return null;
     }
@@ -128,7 +129,8 @@ export function useFFmpeg() {
       const fileList: string[] = [];
       for (let i = 0; i < files.length; i++) {
         const inputName = `input${i}.${files[i].name.split('.').pop()}`;
-        await ffmpeg.writeFile(inputName, await fetchFile(files[i]));
+        const fileData = await files[i].arrayBuffer();
+        await ffmpeg.writeFile(inputName, new Uint8Array(fileData));
         fileList.push(inputName);
       }
 
@@ -156,7 +158,7 @@ export function useFFmpeg() {
 
       // قراءة الملف المخرج
       const data = await ffmpeg.readFile(outputName);
-      const blob = new Blob([data], { type: 'video/mp4' });
+      const blob = new Blob([new Uint8Array(data as any)], { type: 'video/mp4' });
 
       // تنظيف الملفات
       for (const file of fileList) {
@@ -178,7 +180,7 @@ export function useFFmpeg() {
 
   // استخراج الصوت
   const extractAudio = async (videoFile: File): Promise<Blob | null> => {
-    if (!ffmpegRef.current?.isLoaded()) {
+    if (!ffmpegRef.current?.loaded) {
       toast.error('FFmpeg غير محمل');
       return null;
     }
@@ -189,14 +191,15 @@ export function useFFmpeg() {
       const outputName = 'output.mp3';
 
       setProgress({ progress: 0, status: 'جاري تحميل الفيديو...' });
-      await ffmpeg.writeFile(inputName, await fetchFile(videoFile));
+      const videoData = await videoFile.arrayBuffer();
+      await ffmpeg.writeFile(inputName, new Uint8Array(videoData));
 
       setProgress({ progress: 50, status: 'جاري استخراج الصوت...' });
       await ffmpeg.exec(['-i', inputName, '-q:a', '9', '-n', outputName]);
 
       setProgress({ progress: 80, status: 'جاري حفظ الملف...' });
       const data = await ffmpeg.readFile(outputName);
-      const blob = new Blob([data], { type: 'audio/mpeg' });
+      const blob = new Blob([new Uint8Array(data as any)], { type: 'audio/mpeg' });
 
       await ffmpeg.deleteFile(inputName);
       await ffmpeg.deleteFile(outputName);

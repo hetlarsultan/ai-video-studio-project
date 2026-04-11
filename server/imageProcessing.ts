@@ -29,11 +29,10 @@ export interface AnimationKeyframe {
  * Generate Ken Burns effect (smooth zoom and pan)
  */
 export function generateKenBurnsEffect(
-  duration: number,
-  fps: number = 30
+  _duration: number,
+  _fps: number = 30
 ): AnimationKeyframe[] {
   const keyframes: AnimationKeyframe[] = [];
-  const totalFrames = Math.ceil(duration * fps);
 
   // Start: zoomed in on left side
   keyframes.push({
@@ -72,9 +71,9 @@ export function generateKenBurnsEffect(
  * Generate parallax scrolling effect
  */
 export function generateParallaxEffect(
-  duration: number,
+  _duration: number,
   layers: number = 3,
-  fps: number = 30
+  _fps: number = 30
 ): AnimationKeyframe[][] {
   const layerAnimations: AnimationKeyframe[][] = [];
 
@@ -111,7 +110,7 @@ export function generateParallaxEffect(
  */
 export function generateTransitionEffect(
   transitionType: string,
-  duration: number
+  _duration: number
 ): AnimationKeyframe[] {
   const keyframes: AnimationKeyframe[] = [];
 
@@ -235,8 +234,8 @@ export function createImageVideoConfig(
  */
 export function generateImageSequenceFilter(
   imageCount: number,
-  duration: number,
-  transitionType: string
+  _duration: number,
+  _transitionType: string
 ): string {
   let filter = "";
 
@@ -245,7 +244,7 @@ export function generateImageSequenceFilter(
   filter += `${inputs}concat=n=${imageCount}:v=1:a=0[v]`;
 
   // Add transition effects
-  if (transitionType !== "none") {
+  if (_transitionType !== "none") {
     filter += `;[v]fps=30[out]`;
   }
 
@@ -267,7 +266,7 @@ export function calculateTotalDuration(
  * Generate motion blur effect
  */
 export function generateMotionBlurEffect(
-  duration: number,
+  _duration: number,
   intensity: number = 0.5
 ): string {
   // FFmpeg motion blur filter

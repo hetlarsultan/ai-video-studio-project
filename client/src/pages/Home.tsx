@@ -31,11 +31,8 @@ export default function Home() {
 
   // Advanced API calls
   const generateAdvancedVideo = trpc.advanced.video.generateAdvancedVideo.useMutation();
-  const generateVideoWithEffects = trpc.advanced.video.generateVideoWithEffects.useMutation();
   const generateVideoFromImages = trpc.advanced.image.generateVideoFromImages.useMutation();
-  const applyKenBurnsEffect = trpc.advanced.image.applyKenBurnsEffect.useMutation();
   const synthesizeSpeech = trpc.advanced.audio.synthesizeSpeech.useMutation();
-  const synchronizeAudioVideo = trpc.advanced.audio.synchronizeAudioVideo.useMutation();
 
   // Initialize FFmpeg
   useEffect(() => {
@@ -47,7 +44,7 @@ export default function Home() {
           return;
         }
 
-        const { createFFmpeg, fetchFile } = FFmpeg;
+        const { createFFmpeg } = FFmpeg;
         const ffmpeg = createFFmpeg({
           log: true,
           corePath: '/ffmpeg/ffmpeg-core.js',
@@ -127,11 +124,6 @@ export default function Home() {
       });
 
       if (result.success) {
-        // Apply Ken Burns effect
-      const kenBurnsResult = await applyKenBurnsEffect.mutateAsync({
-        duration: result.totalDuration as number,
-        zoomLevel: 1.2 as number,
-      });
 
         setMessage({ 
           type: 'success', 

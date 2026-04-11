@@ -1,30 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Slider } from '@/components/ui/slider';
 import {
   Play,
   Pause,
   Volume2,
-  Download,
-  Plus,
-  Trash2,
-  Copy,
-  Settings,
   Film,
   Type,
-  Zap,
   Music,
   Image,
   Video,
-  ChevronDown,
-  ChevronUp,
-  SkipBack,
-  SkipForward,
   Loader2,
   AlertCircle,
   CheckCircle2,
+  Download,
+  Trash2,
 } from 'lucide-react';
 import { useLocation, useRoute } from 'wouter';
 import DashboardLayout from '@/components/DashboardLayout';

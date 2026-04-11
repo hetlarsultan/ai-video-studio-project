@@ -190,7 +190,7 @@ export function generateAnimatedBackground(
  * Apply visual effects to text
  */
 export function applyTextEffects(
-  text: string,
+  _text: string,
   effects: string[]
 ): { style: string; className: string } {
   let style = "";
@@ -244,7 +244,7 @@ export function calculateFrames(durationSeconds: number, fps: number = 30): numb
  */
 export function generateTransition(
   fromScene: SceneDescription,
-  toScene: SceneDescription,
+  _toScene: SceneDescription,
   transitionDuration: number = 1
 ): SceneDescription {
   return {

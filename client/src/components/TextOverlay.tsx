@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Slider } from '@/components/ui/slider';
-import { Zap, Plus, X } from 'lucide-react';
+import { Type, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface TextOverlayProps {
