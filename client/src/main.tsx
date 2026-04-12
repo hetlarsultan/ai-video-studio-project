@@ -46,6 +46,9 @@ const trpcClient = trpc.createClient({
         return globalThis.fetch(input, {
           ...(init ?? {}),
           credentials: "include",
+        }).catch(error => {
+          console.error('[TRPC Fetch Error]', error);
+          throw error;
         });
       },
     }),
