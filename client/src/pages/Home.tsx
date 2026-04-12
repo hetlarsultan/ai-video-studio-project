@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Loader2, Film, Image, Wand2, Volume2, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
+import { Loader2, Film, Wand2, Volume2, AlertCircle, CheckCircle2, Zap, ImageIcon } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
 /**
@@ -37,31 +37,50 @@ export default function Home() {
   // Initialize FFmpeg
   useEffect(() => {
     const initFFmpeg = async () => {
-      try {
-        const FFmpeg = (window as any).FFmpeg;
-        if (!FFmpeg) {
-          setMessage({ type: 'error', text: 'فشل تحميل FFmpeg' });
+      let retries = 0;
+      const maxRetries = 3;
+      
+      while (retries < maxRetries) {
+        try {
+          let FFmpeg = (window as any).FFmpeg;
+          if (!FFmpeg) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            FFmpeg = (window as any).FFmpeg;
+          }
+          
+          if (!FFmpeg) {
+            throw new Error('FFmpeg library not available');
+          }
+
+          const { createFFmpeg } = FFmpeg;
+          if (!createFFmpeg) {
+            throw new Error('createFFmpeg function not found');
+          }
+          
+          const ffmpeg = createFFmpeg({
+            log: true,
+            corePath: '/ffmpeg/ffmpeg-core.js',
+            progress: ({ ratio }: { ratio: number }) => {
+              setProgress(Math.round(ratio * 100));
+            },
+          });
+
+          ffmpegRef.current = ffmpeg;
+
+          if (!ffmpeg.isLoaded()) {
+            await ffmpeg.load();
+          }
+          setFfmpegReady(true);
+          setMessage({ type: 'success', text: 'تم تحميل النظام بنجاح ✅' });
           return;
+        } catch (error) {
+          retries++;
+          if (retries >= maxRetries) {
+            setMessage({ type: 'error', text: `خطأ في التحميل: ${(error as Error).message}` });
+          } else {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
         }
-
-        const { createFFmpeg } = FFmpeg;
-        const ffmpeg = createFFmpeg({
-          log: true,
-          corePath: '/ffmpeg/ffmpeg-core.js',
-          progress: ({ ratio }: { ratio: number }) => {
-            setProgress(Math.round(ratio * 100));
-          },
-        });
-
-        ffmpegRef.current = ffmpeg;
-
-        if (!ffmpeg.isLoaded()) {
-          await ffmpeg.load();
-        }
-        setFfmpegReady(true);
-        setMessage({ type: 'success', text: 'تم تحميل النظام بنجاح ✅' });
-      } catch (error) {
-        setMessage({ type: 'error', text: `خطأ في التحميل: ${(error as Error).message}` });
       }
     };
 
@@ -332,7 +351,7 @@ export default function Home() {
       let loaded = 0;
 
       Array.from(files).forEach((file) => {
-        const img = new (Image as any)();
+        const img = document.createElement('img');
         img.src = URL.createObjectURL(file);
 
         img.onload = () => {
@@ -484,7 +503,7 @@ export default function Home() {
             {/* Images to Video - Basic */}
             <Card className="bg-slate-800/50 border-slate-700 p-6 hover:border-cyan-500/50 transition-colors">
               <div className="flex items-center gap-3 mb-4">
-                <Image className="w-6 h-6 text-cyan-400" />
+                <ImageIcon className="w-6 h-6 text-cyan-400" />
                 <h2 className="text-2xl font-bold">تحويل الصور إلى فيديو</h2>
               </div>
               <input
@@ -514,7 +533,7 @@ export default function Home() {
             {/* Images to GIF */}
             <Card className="bg-slate-800/50 border-slate-700 p-6 hover:border-cyan-500/50 transition-colors">
               <div className="flex items-center gap-3 mb-4">
-                <Wand2 className="w-6 h-6 text-cyan-400" />
+                <ImageIcon className="w-6 h-6 text-cyan-400" />
                 <h2 className="text-2xl font-bold">تحويل الصور إلى GIF</h2>
               </div>
               <input
