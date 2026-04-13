@@ -1,14 +1,16 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useConnection } from '@/contexts/ConnectionContext';
+import { loadFFmpegLocal } from '@/lib/ffmpegConfig';
 
 interface FFmpegLoaderOptions {
   onReady?: () => void;
   onError?: (error: Error) => void;
   autoLoad?: boolean;
+  useLocal?: boolean;
 }
 
 export const useFFmpegLoader = (options: FFmpegLoaderOptions = {}) => {
-  const { autoLoad = true, onReady, onError } = options;
+  const { autoLoad = true, onReady, onError, useLocal = true } = options;
   const { setIsFFmpegReady, connectionStatus } = useConnection();
   const ffmpegRef = useRef<any>(null);
   const loadingRef = useRef(false);
@@ -21,20 +23,24 @@ export const useFFmpegLoader = (options: FFmpegLoaderOptions = {}) => {
     loadingRef.current = true;
 
     try {
-      // محاولة تحميل FFmpeg من CDN
-      const FFmpeg = (window as any).FFmpeg?.FFmpeg;
-      const fetchFile = (window as any).FFmpeg?.fetchFile;
+      if (useLocal) {
+        // تحميل FFmpeg محلياً
+        const { ffmpeg, fetchFile } = await loadFFmpegLocal();
+        ffmpegRef.current = { ffmpeg, fetchFile };
+      } else {
+        // تحميل FFmpeg من CDN (الطريقة القديمة)
+        const FFmpeg = (window as any).FFmpeg?.FFmpeg;
+        const fetchFile = (window as any).FFmpeg?.fetchFile;
 
-      if (!FFmpeg || !fetchFile) {
-        throw new Error('FFmpeg libraries not loaded');
+        if (!FFmpeg || !fetchFile) {
+          throw new Error('FFmpeg libraries not loaded');
+        }
+
+        const ffmpeg = new FFmpeg();
+        await ffmpeg.load();
+        ffmpegRef.current = { ffmpeg, fetchFile };
       }
 
-      const ffmpeg = new FFmpeg();
-      
-      // تحميل FFmpeg
-      await ffmpeg.load();
-      
-      ffmpegRef.current = ffmpeg;
       setIsFFmpegReady(true);
       onReady?.();
     } catch (error) {
@@ -45,18 +51,18 @@ export const useFFmpegLoader = (options: FFmpegLoaderOptions = {}) => {
     } finally {
       loadingRef.current = false;
     }
-  }, [setIsFFmpegReady, onReady, onError]);
+  }, [setIsFFmpegReady, onReady, onError, useLocal]);
 
   useEffect(() => {
-    if (autoLoad && connectionStatus === 'online') {
+    if (autoLoad && (connectionStatus === 'online' || useLocal)) {
       loadFFmpeg();
     }
-  }, [autoLoad, connectionStatus, loadFFmpeg]);
+  }, [autoLoad, connectionStatus, loadFFmpeg, useLocal]);
 
   const unloadFFmpeg = useCallback(async () => {
-    if (ffmpegRef.current) {
+    if (ffmpegRef.current?.ffmpeg) {
       try {
-        await ffmpegRef.current.deleteFile('*');
+        await ffmpegRef.current.ffmpeg.deleteFile('*');
         ffmpegRef.current = null;
         setIsFFmpegReady(false);
       } catch (error) {
@@ -66,7 +72,8 @@ export const useFFmpegLoader = (options: FFmpegLoaderOptions = {}) => {
   }, [setIsFFmpegReady]);
 
   return {
-    ffmpeg: ffmpegRef.current,
+    ffmpeg: ffmpegRef.current?.ffmpeg,
+    fetchFile: ffmpegRef.current?.fetchFile,
     loadFFmpeg,
     unloadFFmpeg,
   };

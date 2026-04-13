@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Loader2, Film, Wand2, Volume2, AlertCircle, CheckCircle2, Zap, ImageIcon, Download, Eye } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import { useFFmpegLoader } from '@/hooks/useFFmpegLoader';
 
 /**
  * AI Video Studio Pro - Advanced Edition
@@ -28,6 +29,16 @@ export default function Home() {
   const gifOutputRef = useRef<HTMLImageElement>(null);
 
   const ffmpegRef = useRef<any>(null);
+
+  // استخدام FFmpeg محلياً
+  useFFmpegLoader({
+    useLocal: true,
+    onReady: () => setFfmpegReady(true),
+    onError: (error) => {
+      console.error('FFmpeg Error:', error);
+      setMessage({ type: 'error', text: 'خطأ في تحميل FFmpeg' });
+    },
+  });
 
   // Advanced API calls
   const generateAdvancedVideo = trpc.advanced.video.generateAdvancedVideo.useMutation();
