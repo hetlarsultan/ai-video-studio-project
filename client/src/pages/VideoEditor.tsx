@@ -19,8 +19,10 @@ import {
 } from 'lucide-react';
 import { useLocation, useRoute } from 'wouter';
 import DashboardLayout from '@/components/DashboardLayout';
-import { VideoUploader } from '@/components/VideoUploader';
 import { DownloadButton } from '@/components/DownloadButton';
+import VisualEffects from '@/components/VisualEffects';
+import TrimCut from '@/components/TrimCut';
+import { useAutoSave } from '@/hooks/useAutoSave';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 
@@ -82,6 +84,27 @@ export default function VideoEditor() {
     }
   }, [projectQuery.data]);
 
+  // Auto-save handler
+  const handleAutoSave = async () => {
+    try {
+      await updateProjectMutation.mutateAsync({
+        id: projectId,
+        title: projectQuery.data?.project?.title || '',
+        description: projectQuery.data?.project?.description || '',
+        duration: state.duration,
+      });
+    } catch (error) {
+      console.error('Auto-save error:', error);
+    }
+  };
+
+  // استخدام useAutoSave
+  useAutoSave(state, {
+    interval: 30000,
+    onSave: handleAutoSave,
+    enabled: true,
+  });
+
   // Add clip to timeline
   const handleAddClip = (type: TimelineClip['type']) => {
     const newClip: TimelineClip = {
@@ -100,27 +123,26 @@ export default function VideoEditor() {
     toast.success(`تم إضافة ${type} جديد`);
   };
 
-  // Remove clip from timeline
-  const handleRemoveClip = (clipId: string) => {
-    setState(prev => ({
-      ...prev,
-      clips: prev.clips.filter(c => c.id !== clipId),
-      selectedClipId: prev.selectedClipId === clipId ? undefined : prev.selectedClipId,
-    }));
-    toast.success('تم حذف المقطع');
-  };
-
   // Update clip duration
   const handleUpdateClipDuration = (clipId: string, duration: number) => {
     setState(prev => ({
       ...prev,
-      clips: prev.clips.map(c =>
-        c.id === clipId ? { ...c, duration } : c
+      clips: prev.clips.map(clip =>
+        clip.id === clipId ? { ...clip, duration } : clip
       ),
     }));
   };
 
-  // Play/Pause
+  // Remove clip
+  const handleRemoveClip = (clipId: string) => {
+    setState(prev => ({
+      ...prev,
+      clips: prev.clips.filter(clip => clip.id !== clipId),
+    }));
+    toast.success('تم حذف المقطع');
+  };
+
+  // Toggle play/pause
   const togglePlayPause = () => {
     setState(prev => ({
       ...prev,
@@ -131,70 +153,39 @@ export default function VideoEditor() {
   // Save project
   const handleSaveProject = async () => {
     try {
-      const result = await updateProjectMutation.mutateAsync({
+      await updateProjectMutation.mutateAsync({
         id: projectId,
-        clipsData: JSON.stringify(state.clips),
-        duration: Math.round(state.currentTime),
+        title: projectQuery.data?.project?.title || '',
+        description: projectQuery.data?.project?.description || '',
+        duration: state.duration,
       });
-
-      if (result.success) {
-        toast.success('تم حفظ المشروع بنجاح');
-      } else {
-        toast.error(result.error || 'فشل حفظ المشروع');
-      }
+      toast.success('تم حفظ المشروع');
     } catch (error) {
-      toast.error(`خطأ: ${(error as Error).message}`);
+      toast.error('فشل حفظ المشروع');
     }
   };
 
   // Export video
   const handleExportVideo = async () => {
-    if (state.clips.length === 0) {
-      toast.error('الرجاء إضافة مقاطع قبل التصدير');
-      return;
-    }
-
     setShowExportDialog(true);
     setExportStatus('exporting');
     setExportProgress(0);
 
-    // Simulate export progress
     try {
+      // Simulate export progress
       for (let i = 0; i <= 100; i += 10) {
-        await new Promise(resolve => setTimeout(resolve, 500));
         setExportProgress(i);
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
 
-      // Generate download URL (simulated)
-      const videoBlob = new Blob(['video data'], { type: 'video/mp4' });
-      const url = URL.createObjectURL(videoBlob);
+      // Generate download URL
+      const url = URL.createObjectURL(new Blob(['video data'], { type: 'video/mp4' }));
       setDownloadUrl(url);
       setExportStatus('completed');
-
-      // Update project status
-      await updateProjectMutation.mutateAsync({
-        id: projectId,
-        status: 'completed',
-        videoUrl: url,
-      });
-
-      toast.success('تم تصدير الفيديو بنجاح!');
+      toast.success('تم تصدير الفيديو بنجاح');
     } catch (error) {
       setExportStatus('error');
-      toast.error(`خطأ في التصدير: ${(error as Error).message}`);
-    }
-  };
-
-  // Download video
-  const handleDownloadVideo = () => {
-    if (downloadUrl) {
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = `video-${projectId}.mp4`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      toast.success('تم بدء تحميل الفيديو');
+      toast.error('فشل تصدير الفيديو');
     }
   };
 
@@ -295,43 +286,24 @@ export default function VideoEditor() {
                     size="sm"
                     className="bg-cyan-500 hover:bg-cyan-600 text-white"
                   >
-                    {state.isPlaying ? (
-                      <Pause className="w-4 h-4" />
-                    ) : (
-                      <Play className="w-4 h-4" />
-                    )}
+                    {state.isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                   </Button>
-
-                  <div className="flex-1">
+                  <div className="flex-1 flex items-center gap-2">
+                    <span className="text-xs text-slate-400">{formatTime(state.currentTime)}</span>
+                    <div className="flex-1 h-1 bg-slate-700 rounded-full" />
+                    <span className="text-xs text-slate-400">{formatTime(state.duration)}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="w-4 h-4 text-slate-400" />
                     <Slider
-                      value={[state.currentTime]}
+                      value={[state.volume]}
                       onValueChange={(value) =>
-                        setState(prev => ({ ...prev, currentTime: value[0] }))
+                        setState(prev => ({ ...prev, volume: value[0] }))
                       }
-                      max={state.duration}
-                      step={0.1}
-                      className="w-full"
+                      max={100}
+                      className="w-24"
                     />
                   </div>
-
-                  <span className="text-sm text-slate-400 font-mono">
-                    {formatTime(state.currentTime)} / {formatTime(state.duration)}
-                  </span>
-                </div>
-
-                {/* Volume Control */}
-                <div className="flex items-center gap-2">
-                  <Volume2 className="w-4 h-4 text-slate-400" />
-                  <Slider
-                    value={[state.volume]}
-                    onValueChange={(value) =>
-                      setState(prev => ({ ...prev, volume: value[0] }))
-                    }
-                    max={100}
-                    step={1}
-                    className="w-24"
-                  />
-                  <span className="text-xs text-slate-400">{state.volume}%</span>
                 </div>
               </div>
             </div>
@@ -360,6 +332,16 @@ export default function VideoEditor() {
                     />
                   </div>
 
+                  {/* Visual Effects */}
+                  <div className="pt-4 border-t border-slate-700">
+                    <VisualEffects />
+                  </div>
+
+                  {/* Trim & Cut */}
+                  <div className="pt-4 border-t border-slate-700">
+                    <TrimCut duration={state.clips.find(c => c.id === state.selectedClipId)?.duration || 100} />
+                  </div>
+
                   <div className="pt-4 border-t border-slate-700">
                     <Button
                       onClick={() =>
@@ -375,155 +357,118 @@ export default function VideoEditor() {
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <p className="text-slate-400">اختر مقطعاً لعرض خصائصه</p>
+                <div className="space-y-2">
+                  <p className="text-sm text-slate-400 mb-4">اختر مقطعاً لتحرير خصائصه</p>
+                  <div className="space-y-2">
+                    <Button
+                      onClick={() => handleAddClip('video')}
+                      className="w-full gap-2 bg-slate-700 hover:bg-slate-600"
+                    >
+                      <Video className="w-4 h-4" />
+                      إضافة فيديو
+                    </Button>
+                    <Button
+                      onClick={() => handleAddClip('image')}
+                      className="w-full gap-2 bg-slate-700 hover:bg-slate-600"
+                    >
+                      <Image className="w-4 h-4" />
+                      إضافة صورة
+                    </Button>
+                    <Button
+                      onClick={() => handleAddClip('text')}
+                      className="w-full gap-2 bg-slate-700 hover:bg-slate-600"
+                    >
+                      <Type className="w-4 h-4" />
+                      إضافة نص
+                    </Button>
+                    <Button
+                      onClick={() => handleAddClip('audio')}
+                      className="w-full gap-2 bg-slate-700 hover:bg-slate-600"
+                    >
+                      <Music className="w-4 h-4" />
+                      إضافة صوت
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
           </div>
 
           {/* Timeline */}
-          <div className="border-t border-slate-700 bg-slate-900 p-4">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white">Timeline</h3>
-              <div className="flex gap-2">
-                <VideoUploader
-                  onFilesUploaded={(files) => {
-                    files.forEach(file => {
-                      if (file.status === 'completed') {
-                        handleAddClip('video');
-                      }
-                    });
-                  }}
-                  acceptedTypes={['.mp4', '.avi', '.mov', '.mkv', '.webm']}
-                />
-                <Button
-                  onClick={() => handleAddClip('image')}
-                  size="sm"
-                  variant="outline"
-                  className="border-slate-600 text-slate-300 hover:bg-slate-700 gap-1"
-                >
-                  <Image className="w-3 h-3" />
-                  صورة
-                </Button>
-                <Button
-                  onClick={() => handleAddClip('text')}
-                  size="sm"
-                  variant="outline"
-                  className="border-slate-600 text-slate-300 hover:bg-slate-700 gap-1"
-                >
-                  <Type className="w-3 h-3" />
-                  نص
-                </Button>
-                <Button
-                  onClick={() => handleAddClip('audio')}
-                  size="sm"
-                  variant="outline"
-                  className="border-slate-600 text-slate-300 hover:bg-slate-700 gap-1"
-                >
-                  <Music className="w-3 h-3" />
-                  صوت
-                </Button>
-              </div>
-            </div>
-
-            {/* Timeline Tracks */}
+          <div className="border-t border-slate-700 bg-slate-900/50 p-4">
             <div
               ref={timelineRef}
-              className="bg-slate-800 rounded-lg border border-slate-700 p-3 overflow-x-auto"
+              className="bg-slate-800 rounded-lg border border-slate-700 p-4 min-h-[120px] overflow-x-auto"
             >
-              {state.clips.length === 0 ? (
-                <div className="text-center py-8 text-slate-400">
-                  <p>لا توجد مقاطع. أضف مقطعاً لبدء التحرير</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {state.clips.map((clip) => (
+              <h3 className="text-sm font-bold text-white mb-3">Timeline</h3>
+              <div className="space-y-2">
+                {state.clips.length === 0 ? (
+                  <p className="text-xs text-slate-500">لا توجد مقاطع. أضف مقطعاً من لوحة الخصائص</p>
+                ) : (
+                  state.clips.map(clip => (
                     <div
                       key={clip.id}
-                      onClick={() =>
-                        setState(prev => ({
-                          ...prev,
-                          selectedClipId: clip.id,
-                        }))
-                      }
-                      className={`p-3 rounded cursor-pointer transition-all ${
+                      onClick={() => setState(prev => ({ ...prev, selectedClipId: clip.id }))}
+                      className={`p-3 rounded-lg cursor-pointer transition-colors ${
                         state.selectedClipId === clip.id
-                          ? 'bg-cyan-500/30 border-2 border-cyan-500'
-                          : 'bg-slate-700 border border-slate-600 hover:border-slate-500'
+                          ? 'bg-cyan-500/30 border border-cyan-500'
+                          : 'bg-slate-700 border border-slate-600 hover:bg-slate-600'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          {clip.type === 'video' && <Video className="w-4 h-4 text-blue-400" />}
-                          {clip.type === 'image' && <Image className="w-4 h-4 text-purple-400" />}
-                          {clip.type === 'text' && <Type className="w-4 h-4 text-yellow-400" />}
-                          {clip.type === 'audio' && <Music className="w-4 h-4 text-green-400" />}
-                          <span className="text-sm font-medium text-white">{clip.name}</span>
-                        </div>
-                        <span className="text-xs text-slate-400">
-                          {formatTime(clip.duration)}
-                        </span>
+                        <span className="text-sm font-medium text-white">{clip.name}</span>
+                        <span className="text-xs text-slate-400">{formatTime(clip.duration)}</span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Export Dialog */}
         <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
-          <DialogContent className="bg-slate-800 border-slate-700">
+          <DialogContent className="bg-slate-900 border-slate-700">
             <DialogHeader>
               <DialogTitle className="text-white">تصدير الفيديو</DialogTitle>
             </DialogHeader>
-
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">
-                  التقدم
-                </label>
-                <div className="w-full bg-slate-700 rounded-full h-2">
-                  <div
-                    className="bg-cyan-500 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${exportProgress}%` }}
-                  />
-                </div>
-                <p className="text-sm text-slate-400 mt-2 text-center">{exportProgress}%</p>
-              </div>
-
               {exportStatus === 'exporting' && (
-                <div className="flex items-center justify-center py-4">
-                  <Loader2 className="w-6 h-6 text-cyan-400 animate-spin mr-2" />
-                  <p className="text-slate-300">جاري تصدير الفيديو...</p>
-                </div>
+                <>
+                  <div className="w-full bg-slate-700 rounded-full h-2">
+                    <div
+                      className="bg-cyan-500 h-2 rounded-full transition-all"
+                      style={{ width: `${exportProgress}%` }}
+                    />
+                  </div>
+                  <p className="text-sm text-slate-300">جاري التصدير... {exportProgress}%</p>
+                </>
               )}
-
               {exportStatus === 'completed' && (
-                <div className="bg-green-500/10 border border-green-500 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <CheckCircle2 className="w-5 h-5 text-green-400" />
-                    <p className="text-green-400 font-medium">تم تصدير الفيديو بنجاح! 🎉</p>
-                  </div>
-                  <Button
-                    onClick={handleDownloadVideo}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    تحميل الفيديو
-                  </Button>
+                <div className="flex items-center gap-2 text-green-400">
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span>تم التصدير بنجاح</span>
                 </div>
               )}
-
               {exportStatus === 'error' && (
-                <div className="bg-red-500/10 border border-red-500 rounded-lg p-4">
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5 text-red-400" />
-                    <p className="text-red-400 font-medium">حدث خطأ في التصدير</p>
-                  </div>
+                <div className="flex items-center gap-2 text-red-400">
+                  <AlertCircle className="w-5 h-5" />
+                  <span>فشل التصدير</span>
                 </div>
+              )}
+              {downloadUrl && (
+                <Button
+                  onClick={() => {
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = 'video.mp4';
+                    a.click();
+                  }}
+                  className="w-full bg-green-500 hover:bg-green-600 text-white"
+                >
+                  تحميل الفيديو
+                </Button>
               )}
             </div>
           </DialogContent>
