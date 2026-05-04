@@ -4,9 +4,13 @@ interface ConnectionContextType {
   isOnline: boolean;
   isFFmpegReady: boolean;
   connectionStatus: 'online' | 'offline' | 'loading';
+  loadingProgress: number; // 0-100
+  loadingMessage: string;
   setIsOnline: (value: boolean) => void;
   setIsFFmpegReady: (value: boolean) => void;
   setConnectionStatus: (status: 'online' | 'offline' | 'loading') => void;
+  setLoadingProgress: (progress: number) => void;
+  setLoadingMessage: (message: string) => void;
 }
 
 const ConnectionContext = createContext<ConnectionContextType | undefined>(undefined);
@@ -15,6 +19,8 @@ export const ConnectionProvider: React.FC<{ children: ReactNode }> = ({ children
   const [isOnline, setIsOnline] = useState(true);
   const [isFFmpegReady, setIsFFmpegReady] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'online' | 'offline' | 'loading'>('loading');
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingMessage, setLoadingMessage] = useState('جاري تحميل النظام...');
 
   const handleOnline = useCallback(() => {
     setIsOnline(true);
@@ -44,9 +50,13 @@ export const ConnectionProvider: React.FC<{ children: ReactNode }> = ({ children
     isOnline,
     isFFmpegReady,
     connectionStatus,
+    loadingProgress,
+    loadingMessage,
     setIsOnline,
     setIsFFmpegReady,
     setConnectionStatus,
+    setLoadingProgress,
+    setLoadingMessage,
   };
 
   return (

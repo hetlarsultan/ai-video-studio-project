@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ConnectionProvider } from "./contexts/ConnectionContext";
 import ConnectionToggle from "./components/ConnectionToggle";
+import ProgressBar from "./components/ProgressBar";
 import Home from "./pages/Home";
 import { TemplatesPage } from "./pages/TemplatesPage";
 import Dashboard from "./pages/Dashboard";
@@ -39,6 +40,7 @@ function App() {
         >
           <TooltipProvider>
             <Toaster />
+            <ProgressBar />
             <Router />
             <ConnectionToggle />
           </TooltipProvider>
