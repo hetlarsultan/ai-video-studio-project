@@ -19,7 +19,7 @@ export const FFmpegConfig = {
   timeout: 30000,
   
   // إعدادات الذاكرة
-  maxMemory: 512 * 1024 * 1024, // 512 MB
+  maxMemory: 128 * 1024 * 1024, // 128 MB - تقليل الذاكرة بشكل كبير لتجنب مشاكل WebAssembly
 };
 
 export const GifConfig = {
@@ -42,7 +42,7 @@ export async function loadFFmpegLocal() {
     
     // الانتظار لتحميل السكريبتات
     let retries = 0;
-    const maxRetries = 20;
+    const maxRetries = 10; // تقليل عدد محاولات إعادة التحميل
     
     while (retries < maxRetries) {
       // محاولة الوصول إلى FFmpeg من window أو self
