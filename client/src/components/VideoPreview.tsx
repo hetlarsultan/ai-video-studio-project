@@ -25,10 +25,13 @@ export default function VideoPreview({
   isLoading = false,
 }: VideoPreviewProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(startTime);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(1);
+  const [hoverTime, setHoverTime] = useState<number | null>(null);
+  const [hoverPosition, setHoverPosition] = useState(0);
 
   // تحديث الوقت الحالي
   useEffect(() => {
@@ -106,6 +109,37 @@ export default function VideoPreview({
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  // معالجة تحريك الفأرة على شريط التقدم
+  const handleProgressHover = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!progressBarRef.current) return;
+
+    const rect = progressBarRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, x / rect.width));
+    const time = startTime + (endTime - startTime) * percentage;
+
+    setHoverTime(time);
+    setHoverPosition(x);
+  };
+
+  // إخفاء معاينة الوقت عند مغادرة شريط التقدم
+  const handleProgressLeave = () => {
+    setHoverTime(null);
+  };
+
+  // تغيير وقت الفيديو عند النقر على شريط التقدم
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!videoRef.current || !progressBarRef.current) return;
+
+    const rect = progressBarRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, x / rect.width));
+    const time = startTime + (endTime - startTime) * percentage;
+
+    videoRef.current.currentTime = time;
+    setCurrentTime(time);
+  };
+
   // حساب نسبة التقدم
   const progress = ((currentTime - startTime) / (endTime - startTime)) * 100;
 
@@ -143,18 +177,58 @@ export default function VideoPreview({
         )}
       </div>
 
-      {/* معلومات الوقت */}
-      <div className="flex justify-between text-sm text-muted-foreground mb-2">
-        <span>{formatTime(currentTime)}</span>
-        <span>{formatTime(endTime - startTime)}</span>
+      {/* معلومات الوقت محسّنة */}
+      <div className="flex justify-between items-center text-sm mb-3">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-cyan-400">{formatTime(currentTime)}</span>
+          <span className="text-muted-foreground">/</span>
+          <span className="text-muted-foreground">{formatTime(endTime - startTime)}</span>
+        </div>
+        <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded">
+          {Math.round(progress)}%
+        </span>
       </div>
 
-      {/* شريط التقدم */}
-      <div className="w-full h-2 bg-muted rounded-full overflow-hidden mb-4">
+      {/* شريط التقدم محسّن مع معاينة الوقت */}
+      <div className="relative mb-6">
         <div
-          className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all"
-          style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
-        />
+          ref={progressBarRef}
+          onMouseMove={handleProgressHover}
+          onMouseLeave={handleProgressLeave}
+          onClick={handleProgressClick}
+          className="relative w-full h-3 bg-muted rounded-full overflow-hidden cursor-pointer group hover:h-4 transition-all"
+        >
+          {/* شريط التقدم الرئيسي */}
+          <div
+            className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all rounded-full"
+            style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
+          />
+          
+          {/* نقطة التشغيل الحالية */}
+          <div
+            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+            style={{
+              left: `${Math.max(0, Math.min(100, progress))}%`,
+              transform: 'translate(-50%, -50%)',
+            }}
+          />
+        </div>
+
+        {/* معاينة الوقت عند المرور */}
+        {hoverTime !== null && (
+          <div
+            className="absolute -top-14 bg-slate-900 text-white px-3 py-2 rounded-lg text-sm font-semibold shadow-lg border border-cyan-500/50 pointer-events-none whitespace-nowrap z-10"
+            style={{
+              left: `${hoverPosition}px`,
+              transform: 'translateX(-50%)',
+            }}
+          >
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-cyan-300">{formatTime(hoverTime)}</span>
+              <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* التحكم بالصوت والتشغيل */}
