@@ -19,7 +19,7 @@ export const FFmpegConfig = {
   timeout: 30000,
   
   // إعدادات الذاكرة
-  maxMemory: 128 * 1024 * 1024, // 128 MB - تقليل الذاكرة بشكل كبير لتجنب مشاكل WebAssembly
+  maxMemory: 64 * 1024 * 1024, // 64 MB - تقليل عدواني للذاكرة لتجنب مشاكل WebAssembly
 };
 
 export const GifConfig = {
@@ -42,7 +42,8 @@ export async function loadFFmpegLocal() {
     
     // الانتظار لتحميل السكريبتات
     let retries = 0;
-    const maxRetries = 10; // تقليل عدد محاولات إعادة التحميل
+    const maxRetries = 30; // زيادة عدد محاولات التحميل
+    const retryDelay = 200; // تقليل التأخير بين المحاولات
     
     while (retries < maxRetries) {
       // محاولة الوصول إلى FFmpeg من window أو self
@@ -75,7 +76,7 @@ export async function loadFFmpegLocal() {
       }
       
       // الانتظار قبل إعادة المحاولة
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
       retries++;
       
       if (retries % 5 === 0) {
@@ -134,6 +135,7 @@ export async function loadGifLocal() {
     // الانتظار لتحميل السكريبتات
     let retries = 0;
     const maxRetries = 20;
+    const retryDelay = 200; // نفس التأخير مثل FFmpeg
     
     while (retries < maxRetries) {
       const GIF = (window as any).GIF || (self as any).GIF;
@@ -144,7 +146,7 @@ export async function loadGifLocal() {
       }
       
       // الانتظار قبل إعادة المحاولة
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
       retries++;
       
       if (retries % 5 === 0) {
