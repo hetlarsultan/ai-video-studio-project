@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Loader2, Film, Wand2, Volume2, AlertCircle, CheckCircle2, Zap, ImageIcon, Download, Eye } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { useFFmpegLoader } from '@/hooks/useFFmpegLoader';
+import VideoPreview from '@/components/VideoPreview';
 
 /**
  * AI Video Studio Pro - Advanced Edition
@@ -19,6 +20,15 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [activeTab, setActiveTab] = useState<'basic' | 'advanced'>('basic');
+  
+  // حالات المعاينة
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewData, setPreviewData] = useState<{
+    videoUrl: string;
+    startTime: number;
+    endTime: number;
+    onConfirm: () => void;
+  } | null>(null);
   
   const textToVideoRef = useRef<HTMLTextAreaElement>(null);
   const imagesToVideoRef = useRef<HTMLInputElement>(null);
@@ -811,6 +821,23 @@ export default function Home() {
         )}
       </div>
 
+      {/* مكون معاينة الفيديو */}
+      {showPreview && previewData && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <VideoPreview
+            videoUrl={previewData.videoUrl}
+            startTime={previewData.startTime}
+            endTime={previewData.endTime}
+            onConfirm={previewData.onConfirm}
+            onCancel={() => {
+              setShowPreview(false);
+              setPreviewData(null);
+            }}
+            isLoading={isLoading}
+          />
+        </div>
+      )}
+      
       {/* Footer */}
       <div className="max-w-7xl mx-auto mt-12 text-center text-slate-400 text-sm">
         <p>جميع المعالجات تتم محليًا في المتصفح - لا توجد تحميلات على الخادم - مجاني 100%</p>
