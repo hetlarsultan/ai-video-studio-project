@@ -3,13 +3,48 @@
 
   <head>
     <meta charset="UTF-8" />
+    
+    <!-- Viewport للأجهزة المحمولة والأندرويد -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+    
+    <!-- CORS Headers -->
     <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin" />
     <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp" />
+    
+    <!-- Theme Color للأندرويد -->
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="AI Video Studio" />
+    
+    <!-- Status Bar للأندرويد -->
+    <meta name="msapplication-TileColor" content="#0f172a" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Title و Description -->
     <title>AI Video Studio Pro - أداة تحويل الفيديو والصور</title>
     <meta name="description" content="أداة احترافية لتحويل النصوص والصور إلى فيديوهات وصور متحركة باستخدام الذكاء الاصطناعي" />
+    
+    <!-- Open Graph للمشاركة على وسائل التواصل -->
+    <meta property="og:title" content="AI Video Studio Pro" />
+    <meta property="og:description" content="أداة احترافية لتحويل الفيديو والصور" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Preconnect للأداء -->
+    <link rel="preconnect" href="https://api.manus.im" />
+    <link rel="dns-prefetch" href="https://api.manus.im" />
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Icons للأندرويد والويب -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     
     <!-- FFmpeg WASM -->
     <script src="/ffmpeg/ffmpeg.min.js"></script>

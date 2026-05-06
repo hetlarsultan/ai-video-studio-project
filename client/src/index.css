@@ -175,3 +175,7 @@
     }
   }
 }
+
+
+/* Mobile and Android optimizations */
+@import "./mobile.css";
