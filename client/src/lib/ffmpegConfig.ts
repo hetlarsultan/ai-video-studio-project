@@ -34,7 +34,7 @@ export const GifConfig = {
 };
 
 /**
- * تحميل FFmpeg محلياً مع إعادة محاولة
+ * تحميل FFmpeg محلياً مع إعادة محاولة محسّنة
  */
 export async function loadFFmpegLocal() {
   try {
@@ -42,37 +42,47 @@ export async function loadFFmpegLocal() {
     
     // الانتظار لتحميل السكريبتات
     let retries = 0;
-    const maxRetries = 30; // زيادة عدد محاولات التحميل
-    const retryDelay = 200; // تقليل التأخير بين المحاولات
+    const maxRetries = 30;
+    const retryDelay = 200;
     
     while (retries < maxRetries) {
-      // محاولة الوصول إلى FFmpeg من window أو self
-      let FFmpegLib = (window as any).FFmpeg;
-      
-      // إذا لم نجد FFmpeg، حاول self
-      if (!FFmpegLib) {
-        FFmpegLib = (self as any).FFmpeg;
-      }
-      
-      // تحقق من وجود FFmpeg و fetchFile
-      if (FFmpegLib && FFmpegLib.FFmpeg && FFmpegLib.fetchFile) {
-        console.log('[FFmpeg] Libraries loaded successfully on retry', retries);
+      try {
+        // محاولة الوصول إلى FFmpeg من window أو self
+        let FFmpegLib = (window as any).FFmpeg;
         
-        const { FFmpeg, fetchFile } = FFmpegLib;
-        const ffmpeg = new FFmpeg();
+        // إذا لم نجد FFmpeg، حاول self
+        if (!FFmpegLib) {
+          FFmpegLib = (self as any).FFmpeg;
+        }
         
-        console.log('[FFmpeg] Loading FFmpeg with local paths...');
-        
-        // تحميل FFmpeg مع المسارات المحلية
-        const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-        await ffmpeg.load({
-          coreURL: `${baseUrl}${FFmpegConfig.corePath}`,
-          wasmURL: `${baseUrl}${FFmpegConfig.wasmPath}`,
-          workerURL: `${baseUrl}${FFmpegConfig.workerPath}`,
-        });
+        // تحقق من وجود FFmpeg و fetchFile
+        if (FFmpegLib && FFmpegLib.FFmpeg && FFmpegLib.fetchFile) {
+          console.log('[FFmpeg] Libraries loaded successfully on retry', retries);
+          
+          const { FFmpeg, fetchFile } = FFmpegLib;
+          const ffmpeg = new FFmpeg();
+          
+          console.log('[FFmpeg] Loading FFmpeg with local paths...');
+          
+          // تحميل FFmpeg مع المسارات المحلية
+          const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+          try {
+            await ffmpeg.load({
+              coreURL: `${baseUrl}${FFmpegConfig.corePath}`,
+              wasmURL: `${baseUrl}${FFmpegConfig.wasmPath}`,
+              workerURL: `${baseUrl}${FFmpegConfig.workerPath}`,
+            });
+          } catch (loadError) {
+            console.warn('[FFmpeg] Failed to load with custom paths, trying default...', loadError);
+            // حاول بدون المسارات المخصصة
+            await ffmpeg.load();
+          }
 
-        console.log('[FFmpeg] FFmpeg loaded successfully');
-        return { ffmpeg, fetchFile };
+          console.log('[FFmpeg] FFmpeg loaded successfully');
+          return { ffmpeg, fetchFile };
+        }
+      } catch (innerError) {
+        console.warn(`[FFmpeg] Retry ${retries} failed:`, innerError);
       }
       
       // الانتظار قبل إعادة المحاولة
@@ -92,30 +102,35 @@ export async function loadFFmpegLocal() {
     if (FFmpegLib && FFmpegLib.createFFmpeg) {
       console.log('[FFmpeg] Using createFFmpeg approach...');
       const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-      const ffmpeg = FFmpegLib.createFFmpeg({
-        log: true,
-        corePath: `${baseUrl}${FFmpegConfig.corePath}`,
-      });
       
-      if (!ffmpeg.isLoaded()) {
-        try {
-          await ffmpeg.load();
-        } catch (e) {
-          console.warn('[FFmpeg] createFFmpeg load failed, trying default paths...');
-          // Try with default paths
-          const ffmpeg2 = FFmpegLib.createFFmpeg({
-            log: true,
-          });
-          await ffmpeg2.load();
-          const fetchFile = FFmpegLib.fetchFile;
-          console.log('[FFmpeg] FFmpeg loaded with default paths');
-          return { ffmpeg: ffmpeg2, fetchFile };
+      try {
+        const ffmpeg = FFmpegLib.createFFmpeg({
+          log: true,
+          corePath: `${baseUrl}${FFmpegConfig.corePath}`,
+        });
+        
+        if (!ffmpeg.isLoaded()) {
+          try {
+            await ffmpeg.load();
+          } catch (e) {
+            console.warn('[FFmpeg] createFFmpeg load failed with custom paths, trying default...', e);
+            // Try with default paths
+            const ffmpeg2 = FFmpegLib.createFFmpeg({
+              log: true,
+            });
+            await ffmpeg2.load();
+            const fetchFile = FFmpegLib.fetchFile;
+            console.log('[FFmpeg] FFmpeg loaded with default paths');
+            return { ffmpeg: ffmpeg2, fetchFile };
+          }
         }
+        
+        const fetchFile = FFmpegLib.fetchFile;
+        console.log('[FFmpeg] FFmpeg loaded via createFFmpeg');
+        return { ffmpeg, fetchFile };
+      } catch (createError) {
+        console.error('[FFmpeg] createFFmpeg approach failed:', createError);
       }
-      
-      const fetchFile = FFmpegLib.fetchFile;
-      console.log('[FFmpeg] FFmpeg loaded via createFFmpeg');
-      return { ffmpeg, fetchFile };
     }
     
     throw new Error('FFmpeg libraries not available after all retries');
@@ -126,7 +141,7 @@ export async function loadFFmpegLocal() {
 }
 
 /**
- * تحميل GIF محلياً مع إعادة محاولة
+ * تحميل GIF محلياً مع إعادة محاولة محسّنة
  */
 export async function loadGifLocal() {
   try {
@@ -135,14 +150,18 @@ export async function loadGifLocal() {
     // الانتظار لتحميل السكريبتات
     let retries = 0;
     const maxRetries = 20;
-    const retryDelay = 200; // نفس التأخير مثل FFmpeg
+    const retryDelay = 200;
     
     while (retries < maxRetries) {
-      const GIF = (window as any).GIF || (self as any).GIF;
+      try {
+        const GIF = (window as any).GIF || (self as any).GIF;
 
-      if (GIF) {
-        console.log('[GIF] Library loaded successfully on retry', retries);
-        return GIF;
+        if (GIF) {
+          console.log('[GIF] Library loaded successfully on retry', retries);
+          return GIF;
+        }
+      } catch (innerError) {
+        console.warn(`[GIF] Retry ${retries} failed:`, innerError);
       }
       
       // الانتظار قبل إعادة المحاولة
