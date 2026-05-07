@@ -179,3 +179,7 @@
 
 /* Mobile and Android optimizations */
 @import "./mobile.css";
+
+
+/* Gesture animations and transitions */
+@import "./gestures.css";

@@ -1,0 +1,274 @@
+/* انتقالات الإيماءات والتفاعلات */
+
+/* انتقالات الشرائح */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* انتقالات الضغط */
+@keyframes pressScale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes longPressRipple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+/* انتقالات الضغط المزدوج */
+@keyframes doubleTapZoom {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* فئات الحركة */
+.slide-in-right {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+.slide-in-left {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+.slide-out-left {
+  animation: slideOutToLeft 0.3s ease-in;
+}
+
+.slide-out-right {
+  animation: slideOutToRight 0.3s ease-in;
+}
+
+.press-scale {
+  animation: pressScale 0.2s ease-out;
+}
+
+.long-press-ripple {
+  animation: longPressRipple 0.6s ease-out;
+}
+
+.double-tap-zoom {
+  animation: doubleTapZoom 0.3s ease-out;
+}
+
+/* تأثيرات اللمس المخصصة */
+.touch-feedback {
+  position: relative;
+  overflow: hidden;
+}
+
+.touch-feedback::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.3);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.touch-feedback:active::after {
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  to {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+  }
+}
+
+/* تحسينات الأداء */
+.gesture-container {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* تأثيرات الحركة المخفضة */
+@media (prefers-reduced-motion: reduce) {
+  .slide-in-right,
+  .slide-in-left,
+  .slide-out-left,
+  .slide-out-right,
+  .press-scale,
+  .long-press-ripple,
+  .double-tap-zoom,
+  .touch-feedback::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* تأثيرات الحركة على الأجهزة المحمولة */
+@media (hover: none) and (pointer: coarse) {
+  /* تحسين الاستجابة على الأجهزة المحمولة */
+  .gesture-element {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  /* تحسين الأداء */
+  .gesture-element * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* تأثيرات اللمس المحسّنة */
+  .gesture-element:active {
+    opacity: 0.8;
+  }
+}
+
+/* تأثيرات الانتقال السلس */
+.swipe-transition {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.swipe-no-transition {
+  transition: none;
+}
+
+/* مؤشرات التقدم */
+.progress-indicator {
+  transition: width 0.3s ease-out, background-color 0.3s ease-out;
+}
+
+.progress-indicator.active {
+  background: linear-gradient(135deg, #06b6d4, #a855f7);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+}
+
+/* تأثيرات الخطوات */
+.step-container {
+  transition: opacity 0.3s ease-out;
+}
+
+.step-container.entering {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+.step-container.exiting {
+  animation: slideOutToLeft 0.3s ease-in;
+}
+
+/* تأثيرات الأزرار */
+.gesture-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease-out;
+}
+
+.gesture-button:active {
+  transform: scale(0.95);
+}
+
+.gesture-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.gesture-button:active::before {
+  animation: buttonRipple 0.6s ease-out;
+}
+
+@keyframes buttonRipple {
+  to {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+  }
+}
+
+/* تأثيرات النصوص */
+.gesture-text {
+  transition: color 0.2s ease-out;
+}
+
+.gesture-text:active {
+  color: var(--accent);
+}
+
+/* تأثيرات الصور */
+.gesture-image {
+  transition: transform 0.2s ease-out;
+}
+
+.gesture-image:active {
+  transform: scale(0.95);
+}
