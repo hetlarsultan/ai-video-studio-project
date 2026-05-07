@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Loader2, Film, Wand2, Volume2, AlertCircle, CheckCircle2, Zap, ImageIcon, Download, Eye } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { useFFmpegLoader } from '@/hooks/useFFmpegLoader';
+import { useVideoEditorGestures } from '@/hooks/useVideoEditorGestures';
 import VideoPreview from '@/components/VideoPreview';
 
 /**
@@ -20,6 +21,31 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [activeTab, setActiveTab] = useState<'basic' | 'advanced'>('basic');
+  const [_currentEditorStep, setCurrentEditorStep] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+
+  // ربط إيماءات اللمس مع عمليات الفيديو
+  useVideoEditorGestures(
+    {
+      onNextStep: () => setCurrentEditorStep(prev => prev + 1),
+      onPreviousStep: () => setCurrentEditorStep(prev => Math.max(0, prev - 1)),
+      onPlayPause: () => setIsPlaying(!isPlaying),
+      onMuteUnmute: () => setIsMuted(!isMuted),
+      onResetVideo: () => {
+        setCurrentEditorStep(0);
+        setIsPlaying(false);
+      },
+      onExportVideo: () => {
+        setMessage({ type: 'success', text: 'جاري تصدير الفيديو...' });
+      },
+    },
+    {
+      enableSwipe: true,
+      enableDoubleTap: true,
+      enableLongPress: true,
+    }
+  );
   
   // حالات المعاينة
   const [showPreview, setShowPreview] = useState(false);

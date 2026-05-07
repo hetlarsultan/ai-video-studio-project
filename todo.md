@@ -148,5 +148,7 @@
 - [x] ربط SwipeNavigation بواجهة تحرير الفيديو
 - [x] تطبيق أصناف gestures.css على المكونات
 - [x] إصلاح استخدام Tailwind الديناميكي في SwipeNavigation
+- [x] دمج VideoEditorWithGestures فعلياً مع Home.tsx
+- [x] ربط useVideoEditorGestures بعمليات الفيديو الفعلية
 - [ ] اختبار الإيمائات على أجهزة حقيقية
 - [x] تحسين الأداء والاستجابة
