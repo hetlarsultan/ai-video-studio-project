@@ -82,13 +82,17 @@ export function SwipeNavigation({
       {/* محتوى الخطوة مع الرسوم المتحركة */}
       <div className="flex-1 overflow-hidden relative">
         <div
-          className={`w-full h-full transition-all duration-${animationDuration} ${
-            slideDirection === 'left'
-              ? 'translate-x-full opacity-0'
-              : slideDirection === 'right'
-                ? '-translate-x-full opacity-0'
-                : 'translate-x-0 opacity-100'
-          }`}
+          style={{
+            transition: `all ${animationDuration}ms ease-out`,
+            transform:
+              slideDirection === 'left'
+                ? 'translateX(100%)'
+                : slideDirection === 'right'
+                  ? 'translateX(-100%)'
+                  : 'translateX(0)',
+            opacity: slideDirection ? 0 : 1,
+          }}
+          className="w-full h-full"
         >
           {currentStep.component}
         </div>
