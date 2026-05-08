@@ -8,7 +8,8 @@ import { ConnectionProvider } from "./contexts/ConnectionContext";
 import ConnectionToggle from "./components/ConnectionToggle";
 import ProgressBar from "./components/ProgressBar";
 import { FFmpegLoadingIndicator } from "./components/FFmpegLoadingIndicator";
-import Home from "./pages/Home";
+import Home from "./pages/HomeImproved";
+// import Home from "./pages/Home"; // Original version available for fallback
 import { TemplatesPage } from "./pages/TemplatesPage";
 import Dashboard from "./pages/Dashboard";
 import VideoEditor from "./pages/VideoEditor";

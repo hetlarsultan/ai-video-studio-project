@@ -183,3 +183,6 @@
 
 /* Gesture animations and transitions */
 @import "./gestures.css";
+
+/* UI Enhancements for File Processing */
+@import "./styles/ui-enhancements.css";
