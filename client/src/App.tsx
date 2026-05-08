@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { ConnectionProvider } from "./contexts/ConnectionContext";
 import ConnectionToggle from "./components/ConnectionToggle";
 import ProgressBar from "./components/ProgressBar";
+import { FFmpegLoadingIndicator } from "./components/FFmpegLoadingIndicator";
 import Home from "./pages/Home";
 import { TemplatesPage } from "./pages/TemplatesPage";
 import Dashboard from "./pages/Dashboard";
@@ -41,6 +42,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <ProgressBar />
+            <FFmpegLoadingIndicator />
             <Router />
             <ConnectionToggle />
           </TooltipProvider>
