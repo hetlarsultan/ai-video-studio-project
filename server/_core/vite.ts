@@ -21,7 +21,19 @@ export async function setupVite(app: Express, server: Server) {
     appType: "custom",
   });
 
+  // Serve static files from client/public BEFORE Vite middlewares
+  const publicDir = path.resolve(
+    import.meta.dirname,
+    "..",
+    "..",
+    "client",
+    "public"
+  );
+  app.use(express.static(publicDir));
+  
   app.use(vite.middlewares);
+  
+  // Render index.html for all other requests
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
 
