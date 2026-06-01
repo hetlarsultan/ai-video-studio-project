@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./mobile.css";
+@import "./gestures.css";
+@import "./styles/ui-enhancements.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -176,13 +179,3 @@
   }
 }
 
-
-/* Mobile and Android optimizations */
-@import "./mobile.css";
-
-
-/* Gesture animations and transitions */
-@import "./gestures.css";
-
-/* UI Enhancements for File Processing */
-@import "./styles/ui-enhancements.css";
