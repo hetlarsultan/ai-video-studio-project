@@ -37,7 +37,7 @@ export const FileProcessingCard: React.FC<FileProcessingCardProps> = ({
   };
 
   return (
-    <Card className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-slate-700/50 p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20">
+    <Card className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-slate-700/50 p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 card-animated">
       {/* Header */}
       <div className="flex items-start gap-4 mb-6">
         <div className="p-3 bg-gradient-to-br from-cyan-500/20 via-blue-500/20 to-purple-500/20 rounded-lg">
@@ -59,7 +59,7 @@ export const FileProcessingCard: React.FC<FileProcessingCardProps> = ({
         <Button
           onClick={onProcess}
           disabled={isLoading || isDisabled}
-          className={`w-full bg-gradient-to-r ${variantStyles[variant]} text-white font-semibold py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`w-full bg-gradient-to-r ${variantStyles[variant]} text-white font-semibold py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed btn-animated btn-shadow`}
         >
           {isLoading ? (
             <>

@@ -442,7 +442,7 @@ export default function HomeImproved() {
             <Button
               onClick={() => setActiveTab('basic')}
               variant={activeTab === 'basic' ? 'default' : 'outline'}
-              className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+              className={`px-6 py-2 rounded-lg font-semibold transition-all btn-animated btn-shadow ${
                 activeTab === 'basic'
                   ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white shadow-lg shadow-cyan-500/50'
                   : 'border-slate-600 text-slate-300 hover:border-cyan-500 hover:shadow-lg hover:shadow-cyan-500/30'
@@ -454,7 +454,7 @@ export default function HomeImproved() {
             <Button
               onClick={() => setActiveTab('advanced')}
               variant={activeTab === 'advanced' ? 'default' : 'outline'}
-              className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+              className={`px-6 py-2 rounded-lg font-semibold transition-all btn-animated btn-shadow ${
                 activeTab === 'advanced'
                   ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-600 text-white shadow-lg shadow-purple-500/50'
                   : 'border-slate-600 text-slate-300 hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/30'

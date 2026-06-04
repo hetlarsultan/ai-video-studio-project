@@ -2,7 +2,8 @@
 @import "tw-animate-css";
 @import "./mobile.css";
 @import "./gestures.css";
-@import "./styles/ui-enhancements.css";
+@import './styles/ui-enhancements.css';
+@import './styles/animations.css';
 
 @custom-variant dark (&:is(.dark *));
 
