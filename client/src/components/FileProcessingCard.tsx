@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { LucideIcon, Loader2 } from 'lucide-react';
+import { Tooltip } from './Tooltip';
 
 interface FileProcessingCardProps {
   icon: LucideIcon;
@@ -16,6 +17,7 @@ interface FileProcessingCardProps {
   successMessage?: string;
   errorMessage?: string;
   variant?: 'primary' | 'secondary' | 'success';
+  tooltip?: string;
 }
 
 export const FileProcessingCard: React.FC<FileProcessingCardProps> = ({
@@ -29,6 +31,7 @@ export const FileProcessingCard: React.FC<FileProcessingCardProps> = ({
   buttonLabel = 'معالجة',
   buttonIcon: ButtonIcon,
   variant = 'primary',
+  tooltip,
 }) => {
   const variantStyles = {
     primary: 'from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-700',
@@ -56,23 +59,45 @@ export const FileProcessingCard: React.FC<FileProcessingCardProps> = ({
         {children}
 
         {/* Action Button */}
-        <Button
-          onClick={onProcess}
-          disabled={isLoading || isDisabled}
-          className={`w-full bg-gradient-to-r ${variantStyles[variant]} text-white font-semibold py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed btn-animated btn-shadow`}
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              <span>جاري المعالجة...</span>
-            </>
-          ) : (
-            <>
-              {ButtonIcon && <ButtonIcon className="w-5 h-5" />}
-              <span>{buttonLabel}</span>
-            </>
-          )}
-        </Button>
+        {tooltip ? (
+          <Tooltip content={tooltip} position="top">
+            <Button
+              onClick={onProcess}
+              disabled={isLoading || isDisabled}
+              className={`w-full bg-gradient-to-r ${variantStyles[variant]} text-white font-semibold py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed btn-animated btn-shadow`}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>جاري المعالجة...</span>
+                </>
+              ) : (
+                <>
+                  {ButtonIcon && <ButtonIcon className="w-5 h-5" />}
+                  <span>{buttonLabel}</span>
+                </>
+              )}
+            </Button>
+          </Tooltip>
+        ) : (
+          <Button
+            onClick={onProcess}
+            disabled={isLoading || isDisabled}
+            className={`w-full bg-gradient-to-r ${variantStyles[variant]} text-white font-semibold py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed btn-animated btn-shadow`}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>جاري المعالجة...</span>
+              </>
+            ) : (
+              <>
+                {ButtonIcon && <ButtonIcon className="w-5 h-5" />}
+                <span>{buttonLabel}</span>
+              </>
+            )}
+          </Button>
+        )}
       </div>
     </Card>
   );
