@@ -7,6 +7,8 @@ import { useVideoEditorGestures } from '@/hooks/useVideoEditorGestures';
 import FileProcessingCard from '@/components/FileProcessingCard';
 import OutputSection from '@/components/OutputSection';
 import { Tooltip } from '@/components/Tooltip';
+import { ProgressBar } from '@/components/ProgressBar';
+import { LoadingAnimation } from '@/components/LoadingAnimation';
 
 /**
  * AI Video Studio Pro - Enhanced UI Version
@@ -490,10 +492,26 @@ export default function HomeImproved() {
 
           {/* Progress Bar */}
           {isLoading && (
-            <div className="w-full bg-slate-800/50 rounded-full h-3 mb-6 overflow-hidden border border-slate-700">
-              <div
-                className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 h-full transition-all duration-300 shadow-lg shadow-cyan-500/50"
-                style={{ width: `${progress}%` }}
+            <div className="mb-6">
+              <ProgressBar
+                progress={progress}
+                isVisible={isLoading}
+                label="تقدم المعالجة"
+                animated={true}
+                variant="primary"
+                showPercentage={true}
+              />
+            </div>
+          )}
+
+          {/* Loading Animation */}
+          {isLoading && (
+            <div className="mb-8">
+              <LoadingAnimation
+                isVisible={isLoading}
+                message="جاري معالجة الملف... يرجى الانتظار"
+                variant="wave"
+                size="medium"
               />
             </div>
           )}
