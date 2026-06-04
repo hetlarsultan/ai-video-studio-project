@@ -31,17 +31,17 @@ export const FileProcessingCard: React.FC<FileProcessingCardProps> = ({
   variant = 'primary',
 }) => {
   const variantStyles = {
-    primary: 'from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700',
-    secondary: 'from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700',
+    primary: 'from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-700',
+    secondary: 'from-blue-500 via-purple-500 to-pink-600 hover:from-blue-600 hover:via-purple-600 hover:to-pink-700',
     success: 'from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700',
   };
 
   return (
-    <Card className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-slate-700/50 p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10">
+    <Card className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-slate-700/50 p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20">
       {/* Header */}
       <div className="flex items-start gap-4 mb-6">
-        <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-lg">
-          <Icon className="w-6 h-6 text-cyan-400" />
+        <div className="p-3 bg-gradient-to-br from-cyan-500/20 via-blue-500/20 to-purple-500/20 rounded-lg">
+          <Icon className="w-6 h-6 text-cyan-300" />
         </div>
         <div className="flex-1">
           <h3 className="text-xl font-bold text-white mb-1">{title}</h3>

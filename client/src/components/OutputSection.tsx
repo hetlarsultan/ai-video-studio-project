@@ -35,7 +35,7 @@ export const OutputSection: React.FC<OutputSectionProps> = ({
               onClick={onPreview}
               variant="outline"
               size="sm"
-              className="border-slate-600 text-slate-300 hover:bg-slate-700/50"
+              className="border-slate-600 text-slate-300 hover:bg-slate-700/50 hover:border-cyan-500/50"
             >
               <Eye className="w-4 h-4 mr-2" />
               {previewLabel}
@@ -45,7 +45,7 @@ export const OutputSection: React.FC<OutputSectionProps> = ({
             <Button
               onClick={onDownload}
               size="sm"
-              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+              className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-700 text-white shadow-lg shadow-cyan-500/30"
             >
               <Download className="w-4 h-4 mr-2" />
               {downloadLabel}

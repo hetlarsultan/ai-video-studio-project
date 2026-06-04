@@ -426,7 +426,7 @@ export default function HomeImproved() {
       <div className="max-w-7xl mx-auto mb-12">
         <div className="text-center mb-8">
           <h1 className="text-5xl md:text-6xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
               🎬 AI Video Studio Pro
             </span>
           </h1>
@@ -444,8 +444,8 @@ export default function HomeImproved() {
               variant={activeTab === 'basic' ? 'default' : 'outline'}
               className={`px-6 py-2 rounded-lg font-semibold transition-all ${
                 activeTab === 'basic'
-                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
-                  : 'border-slate-600 text-slate-300 hover:border-cyan-500'
+                  ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white shadow-lg shadow-cyan-500/50'
+                  : 'border-slate-600 text-slate-300 hover:border-cyan-500 hover:shadow-lg hover:shadow-cyan-500/30'
               }`}
             >
               <Film className="w-4 h-4 mr-2" />
@@ -456,8 +456,8 @@ export default function HomeImproved() {
               variant={activeTab === 'advanced' ? 'default' : 'outline'}
               className={`px-6 py-2 rounded-lg font-semibold transition-all ${
                 activeTab === 'advanced'
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
-                  : 'border-slate-600 text-slate-300 hover:border-purple-500'
+                  ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-600 text-white shadow-lg shadow-purple-500/50'
+                  : 'border-slate-600 text-slate-300 hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/30'
               }`}
             >
               <Zap className="w-4 h-4 mr-2" />
@@ -487,7 +487,7 @@ export default function HomeImproved() {
           {isLoading && (
             <div className="w-full bg-slate-800/50 rounded-full h-3 mb-6 overflow-hidden border border-slate-700">
               <div
-                className="bg-gradient-to-r from-cyan-400 to-blue-500 h-full transition-all duration-300 shadow-lg shadow-cyan-500/50"
+                className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 h-full transition-all duration-300 shadow-lg shadow-cyan-500/50"
                 style={{ width: `${progress}%` }}
               />
             </div>
