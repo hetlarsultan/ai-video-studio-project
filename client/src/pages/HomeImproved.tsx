@@ -9,6 +9,7 @@ import OutputSection from '@/components/OutputSection';
 import { Tooltip } from '@/components/Tooltip';
 import { ProgressBar } from '@/components/ProgressBar';
 import { LoadingAnimation } from '@/components/LoadingAnimation';
+import { FileHistory } from '@/components/FileHistory';
 
 /**
  * AI Video Studio Pro - Enhanced UI Version
@@ -798,6 +799,9 @@ export default function HomeImproved() {
           </OutputSection>
         )}
       </div>
+
+      {/* File History Section */}
+      <FileHistory />
     </div>
   );
 }
