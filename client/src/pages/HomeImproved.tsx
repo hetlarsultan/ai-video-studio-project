@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Film, Wand2, Volume2, AlertCircle, CheckCircle2, Zap, ImageIcon } from 'lucide-react';
+import { Film, Wand2, Volume2, AlertCircle, CheckCircle2, Zap, ImageIcon, X } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { useFFmpegLoader } from '@/hooks/useFFmpegLoader';
 import { useVideoEditorGestures } from '@/hooks/useVideoEditorGestures';
@@ -26,6 +26,7 @@ export default function HomeImproved() {
   const [_currentEditorStep, setCurrentEditorStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // ربط إيماءات اللمس مع عمليات الفيديو
   useVideoEditorGestures(
@@ -116,6 +117,16 @@ export default function HomeImproved() {
 
     initFFmpeg();
   }, []);
+
+  // دالة إلغاء العملية
+  const handleCancel = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    setIsLoading(false);
+    setProgress(0);
+    setMessage({ type: 'success', text: 'تم إلغاء العملية بنجاح ✓' });
+  };
 
   // Basic Text to Video
   const handleTextToVideo = async () => {
@@ -490,17 +501,31 @@ export default function HomeImproved() {
             </div>
           )}
 
-          {/* Progress Bar */}
+          {/* Progress Bar with Cancel Button */}
           {isLoading && (
-            <div className="mb-6">
-              <ProgressBar
-                progress={progress}
-                isVisible={isLoading}
-                label="تقدم المعالجة"
-                animated={true}
-                variant="primary"
-                showPercentage={true}
-              />
+            <div className="mb-6 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <ProgressBar
+                    progress={progress}
+                    isVisible={isLoading}
+                    label="تقدم المعالجة"
+                    animated={true}
+                    variant="primary"
+                    showPercentage={true}
+                  />
+                </div>
+                <Tooltip content="إلغاء العملية" position="top">
+                  <Button
+                    onClick={handleCancel}
+                    variant="outline"
+                    size="sm"
+                    className="px-3 py-2 bg-red-500/20 hover:bg-red-500/30 border-red-500/50 text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </Tooltip>
+              </div>
             </div>
           )}
 
