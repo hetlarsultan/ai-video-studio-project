@@ -4,6 +4,8 @@
 @import "./gestures.css";
 @import './styles/ui-enhancements.css';
 @import './styles/animations.css';
+@import './styles/layout-improvements.css';
+@import './styles/responsive-performance.css';
 
 @custom-variant dark (&:is(.dark *));
 

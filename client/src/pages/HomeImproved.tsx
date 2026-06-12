@@ -10,6 +10,8 @@ import { Tooltip } from '@/components/Tooltip';
 import { ProgressBar } from '@/components/ProgressBar';
 import { LoadingAnimation } from '@/components/LoadingAnimation';
 import { FileHistory } from '@/components/FileHistory';
+import { HeroSection } from '@/components/HeroSection';
+import { FeatureCards } from '@/components/FeatureCards';
 
 /**
  * AI Video Studio Pro - Enhanced UI Version
@@ -437,6 +439,16 @@ export default function HomeImproved() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-4 md:p-8">
+      {/* Hero Section */}
+      <div className="max-w-7xl mx-auto mb-12">
+        <HeroSection />
+      </div>
+
+      {/* Feature Cards */}
+      <div className="max-w-7xl mx-auto mb-12">
+        <FeatureCards />
+      </div>
+
       {/* Header Section */}
       <div className="max-w-7xl mx-auto mb-12">
         <div className="text-center mb-8">

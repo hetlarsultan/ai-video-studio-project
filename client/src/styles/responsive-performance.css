@@ -1,0 +1,260 @@
+/* Responsive & Performance Optimizations */
+
+/* تحسين الأداء - استخدام will-change بحذر */
+.performance-optimized {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* تحسين الاستجابة على الشاشات الصغيرة */
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+
+  .header-enhanced {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .header-enhanced h1 {
+    font-size: 1.75rem;
+  }
+
+  .section-enhanced {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .container-enhanced {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .grid-enhanced {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card-enhanced {
+    padding: 1rem;
+  }
+
+  /* تحسين الأزرار على الهواتف */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem 1rem;
+  }
+
+  /* تحسين المدخلات */
+  input,
+  textarea {
+    font-size: 16px; /* منع التكبير التلقائي على iOS */
+    min-height: 44px;
+  }
+
+  /* تحسين الفاصل */
+  .divider-enhanced {
+    margin: 1.5rem 0;
+  }
+
+  /* تحسين الرسائل */
+  .message-enhanced {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+}
+
+/* تحسين الاستجابة على الشاشات المتوسطة */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid-enhanced {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .container-enhanced {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .header-enhanced h1 {
+    font-size: 2rem;
+  }
+}
+
+/* تحسين الاستجابة على الشاشات الكبيرة */
+@media (min-width: 1025px) {
+  .grid-enhanced {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+
+  .container-enhanced {
+    max-width: 1400px;
+  }
+}
+
+/* تحسين الأداء - تقليل الحركات على الأجهزة البطيئة */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* تحسين الأداء - الوضع الداكن */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #0f172a;
+    color: #e2e8f0;
+  }
+}
+
+/* تحسين الأداء - الوضع الفاتح */
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #f8fafc;
+    color: #1e293b;
+  }
+}
+
+/* تحسين الأداء - تقليل استهلاك البطارية */
+@media (prefers-reduced-data: reduce) {
+  *,
+  *::before,
+  *::after {
+    background-attachment: scroll !important;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* تحسين الأداء - عرض الشبكة الضعيفة */
+@media (max-width: 300px) {
+  .grid-enhanced {
+    grid-template-columns: 1fr;
+  }
+
+  .header-enhanced h1 {
+    font-size: 1.5rem;
+  }
+
+  .section-enhanced h2 {
+    font-size: 1.25rem;
+  }
+}
+
+/* تحسين الأداء - تقليل الظلال على الأجهزة المحمولة */
+@media (hover: none) and (pointer: coarse) {
+  .card-enhanced {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-enhanced:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+}
+
+/* تحسين الأداء - تحسين الخطوط */
+@media (prefers-contrast: more) {
+  body {
+    font-weight: 500;
+  }
+
+  .card-enhanced {
+    border-width: 2px;
+  }
+}
+
+/* تحسين الأداء - تحسين سهولة الوصول */
+@media (prefers-contrast: less) {
+  .card-enhanced {
+    opacity: 0.95;
+  }
+}
+
+/* تحسين الأداء - تحسين الاستجابة للمؤشر */
+@media (pointer: coarse) {
+  button,
+  a,
+  [role="button"] {
+    padding: 0.875rem 1.25rem;
+    border-radius: 8px;
+  }
+
+  .tooltip {
+    display: none;
+  }
+}
+
+/* تحسين الأداء - تحسين الاستجابة للماوس */
+@media (pointer: fine) {
+  button:hover,
+  a:hover,
+  [role="button"]:hover {
+    transform: translateY(-2px);
+  }
+
+  .tooltip {
+    display: block;
+  }
+}
+
+/* تحسين الأداء - تحسين الشاشات العريضة جداً */
+@media (min-width: 1920px) {
+  .container-enhanced {
+    max-width: 1600px;
+  }
+
+  .grid-enhanced {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* تحسين الأداء - تحسين الشاشات الضيقة جداً */
+@media (max-width: 280px) {
+  .header-enhanced,
+  .section-enhanced {
+    padding: 1rem;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* تحسين الأداء - استخدام CSS Grid بكفاءة */
+.grid-auto {
+  display: grid;
+  grid-auto-flow: dense;
+  gap: 1rem;
+}
+
+/* تحسين الأداء - استخدام Flexbox بكفاءة */
+.flex-optimized {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* تحسين الأداء - تقليل إعادة الرسم */
+.no-repaint {
+  contain: layout style paint;
+}
+
+/* تحسين الأداء - تقليل إعادة التخطيط */
+.no-reflow {
+  contain: layout;
+}
