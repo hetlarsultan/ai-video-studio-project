@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Download, Trash2, Calendar } from 'lucide-react';
 import { Tooltip } from '@/components/Tooltip';
+import { useToast } from '@/contexts/ToastContext';
 
 export interface ProcessedFile {
   id: string;
@@ -18,6 +19,7 @@ interface FileHistoryProps {
 }
 
 export const FileHistory: React.FC<FileHistoryProps> = ({ onDownload, onDelete }) => {
+  const { showToast } = useToast();
   const [files, setFiles] = useState<ProcessedFile[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -45,6 +47,7 @@ export const FileHistory: React.FC<FileHistoryProps> = ({ onDownload, onDelete }
   const handleDelete = (fileId: string) => {
     const updatedFiles = files.filter(f => f.id !== fileId);
     saveToLocalStorage(updatedFiles);
+    showToast('تم حذف الملف من السجل', 'success');
     onDelete?.(fileId);
   };
 
@@ -56,6 +59,7 @@ export const FileHistory: React.FC<FileHistoryProps> = ({ onDownload, onDelete }
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    showToast(`جاري تنزيل ${file.name}...`, 'info');
     onDownload?.(file);
   };
 

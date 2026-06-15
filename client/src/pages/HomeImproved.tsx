@@ -12,6 +12,7 @@ import { LoadingAnimation } from '@/components/LoadingAnimation';
 import { FileHistory } from '@/components/FileHistory';
 import { HeroSection } from '@/components/HeroSection';
 import { FeatureCards } from '@/components/FeatureCards';
+import { useToast } from '@/contexts/ToastContext';
 
 /**
  * AI Video Studio Pro - Enhanced UI Version
@@ -21,6 +22,7 @@ import { FeatureCards } from '@/components/FeatureCards';
  */
 
 export default function HomeImproved() {
+  const { showToast } = useToast();
   const [ffmpegReady, setFfmpegReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -68,10 +70,13 @@ export default function HomeImproved() {
   // استخدام FFmpeg محلياً
   useFFmpegLoader({
     useLocal: true,
-    onReady: () => setFfmpegReady(true),
+    onReady: () => {
+      setFfmpegReady(true);
+      showToast('تم تحميل FFmpeg بنجاح', 'success');
+    },
     onError: (error) => {
       console.error('FFmpeg Error:', error);
-      setMessage({ type: 'error', text: 'خطأ في تحميل FFmpeg' });
+      showToast('خطأ في تحميل FFmpeg', 'error');
     },
   });
 
@@ -128,19 +133,19 @@ export default function HomeImproved() {
     }
     setIsLoading(false);
     setProgress(0);
-    setMessage({ type: 'success', text: 'تم إلغاء العملية بنجاح ✓' });
+    showToast('تم إلغاء العملية بنجاح', 'success');
   };
 
   // Basic Text to Video
   const handleTextToVideo = async () => {
     const text = textToVideoRef.current?.value;
     if (!text) {
-      setMessage({ type: 'error', text: 'الرجاء إدخال نص' });
+      showToast('الرجاء إدخال نص', 'warning');
       return;
     }
 
     if (!ffmpegRef.current?.isLoaded()) {
-      setMessage({ type: 'error', text: 'النظام غير جاهز' });
+      showToast('النظام غير جاهز', 'error');
       return;
     }
 
@@ -194,11 +199,11 @@ export default function HomeImproved() {
         videoOutputRef.current.src = url;
       }
 
-      setMessage({ type: 'success', text: 'تم إنشاء الفيديو بنجاح! 🎬' });
+      showToast('تم إنشاء الفيديو بنجاح', 'success');
       ffmpeg.FS('unlink', 'text.png');
       ffmpeg.FS('unlink', 'out.mp4');
     } catch (error) {
-      setMessage({ type: 'error', text: `خطأ: ${(error as Error).message}` });
+      showToast(`خطأ: ${(error as Error).message}`, 'error');
     } finally {
       setIsLoading(false);
       setProgress(0);
@@ -209,12 +214,12 @@ export default function HomeImproved() {
   const handleImagesToVideo = async () => {
     const files = imagesToVideoRef.current?.files;
     if (!files || files.length === 0) {
-      setMessage({ type: 'error', text: 'الرجاء اختيار صور' });
+      showToast('الرجاء اختيار صور', 'warning');
       return;
     }
 
     if (!ffmpegRef.current?.isLoaded()) {
-      setMessage({ type: 'error', text: 'النظام غير جاهز' });
+      showToast('النظام غير جاهز', 'error');
       return;
     }
 
@@ -251,7 +256,7 @@ export default function HomeImproved() {
         videoFromImagesRef.current.src = url;
       }
 
-      setMessage({ type: 'success', text: 'تم إنشاء الفيديو من الصور بنجاح! 🎬' });
+      showToast('تم إنشاء الفيديو من الصور بنجاح', 'success');
 
       for (let i = 0; i < files.length; i++) {
         ffmpeg.FS('unlink', `img${i}.png`);
@@ -259,7 +264,7 @@ export default function HomeImproved() {
       ffmpeg.FS('unlink', 'list.txt');
       ffmpeg.FS('unlink', 'slide.mp4');
     } catch (error) {
-      setMessage({ type: 'error', text: `خطأ: ${(error as Error).message}` });
+      showToast(`خطأ: ${(error as Error).message}`, 'error');
     } finally {
       setIsLoading(false);
       setProgress(0);
@@ -270,7 +275,7 @@ export default function HomeImproved() {
   const handleImagesToGif = async () => {
     const files = imagesToGifRef.current?.files;
     if (!files || files.length === 0) {
-      setMessage({ type: 'error', text: 'الرجاء اختيار صور' });
+      showToast('الرجاء اختيار صور', 'warning');
       return;
     }
 
@@ -307,10 +312,10 @@ export default function HomeImproved() {
         if (gifOutputRef.current) {
           gifOutputRef.current.src = url;
         }
-        setMessage({ type: 'success', text: 'تم إنشاء GIF بنجاح! 🎬' });
+        showToast('تم إنشاء GIF بنجاح', 'success');
       });
     } catch (error) {
-      setMessage({ type: 'error', text: `خطأ: ${(error as Error).message}` });
+      showToast(`خطأ: ${(error as Error).message}`, 'error');
     } finally {
       setIsLoading(false);
       setProgress(0);
@@ -321,7 +326,7 @@ export default function HomeImproved() {
   const handleAdvancedTextToVideo = async () => {
     const text = textToVideoRef.current?.value;
     if (!text) {
-      setMessage({ type: 'error', text: 'الرجاء إدخال نص' });
+      showToast('الرجاء إدخال نص', 'warning');
       return;
     }
 
@@ -335,15 +340,12 @@ export default function HomeImproved() {
       });
 
       if (result.success) {
-        setMessage({
-          type: 'success',
-          text: `تم إنشاء الفيديو! المدة: ${result.totalDuration || 20} ثانية`,
-        });
+        showToast(`تم إنشاء الفيديو! المدة: ${result.totalDuration || 20} ثانية`, 'success');
       } else {
-        setMessage({ type: 'error', text: result.error || 'حدث خطأ' });
+        showToast(result.error || 'حدث خطأ', 'error');
       }
     } catch (error) {
-      setMessage({ type: 'error', text: `خطأ: ${(error as Error).message}` });
+      showToast(`خطأ: ${(error as Error).message}`, 'error');
     } finally {
       setIsLoading(false);
       setProgress(0);
@@ -354,7 +356,7 @@ export default function HomeImproved() {
   const handleAdvancedImagesToVideo = async () => {
     const files = imagesToVideoRef.current?.files;
     if (!files || files.length === 0) {
-      setMessage({ type: 'error', text: 'الرجاء اختيار صور' });
+      showToast('الرجاء اختيار صور', 'warning');
       return;
     }
 
@@ -368,15 +370,12 @@ export default function HomeImproved() {
       });
 
       if (result.success) {
-        setMessage({
-          type: 'success',
-          text: `تم إنشاء الفيديو! المدة: ${result.totalDuration || 15} ثانية`,
-        });
+        showToast(`تم إنشاء الفيديو! المدة: ${result.totalDuration || 15} ثانية`, 'success');
       } else {
-        setMessage({ type: 'error', text: result.error || 'حدث خطأ' });
+        showToast(result.error || 'حدث خطأ', 'error');
       }
     } catch (error) {
-      setMessage({ type: 'error', text: `خطأ: ${(error as Error).message}` });
+      showToast(`خطأ: ${(error as Error).message}`, 'error');
     } finally {
       setIsLoading(false);
     }
@@ -386,7 +385,7 @@ export default function HomeImproved() {
   const handleAdvancedTextToSpeech = async () => {
     const text = textToSpeechRef.current?.value;
     if (!text) {
-      setMessage({ type: 'error', text: 'الرجاء إدخال نص' });
+      showToast('الرجاء إدخال نص', 'warning');
       return;
     }
 
@@ -401,19 +400,16 @@ export default function HomeImproved() {
       });
 
       if (result.success) {
-        setMessage({
-          type: 'success',
-          text: `تم إعداد الصوت! المدة المتوقعة: ${Math.round(result.estimatedDuration || 0)} ثانية`,
-        });
+        showToast(`تم إعداد الصوت! المدة المتوقعة: ${Math.round(result.estimatedDuration || 0)} ثانية`, 'success');
 
         const speech = new SpeechSynthesisUtterance(text);
         speech.lang = 'ar-SA';
         speechSynthesis.speak(speech);
       } else {
-        setMessage({ type: 'error', text: result.error || 'حدث خطأ' });
+        showToast(result.error || 'حدث خطأ', 'error');
       }
     } catch (error) {
-      setMessage({ type: 'error', text: `خطأ: ${(error as Error).message}` });
+      showToast(`خطأ: ${(error as Error).message}`, 'error');
     } finally {
       setIsLoading(false);
     }
@@ -423,7 +419,7 @@ export default function HomeImproved() {
   const handleTextToSpeech = async () => {
     const text = textToSpeechRef.current?.value;
     if (!text) {
-      setMessage({ type: 'error', text: 'الرجاء إدخال نص' });
+      showToast('الرجاء إدخال نص', 'warning');
       return;
     }
 
@@ -431,9 +427,9 @@ export default function HomeImproved() {
       const speech = new SpeechSynthesisUtterance(text);
       speech.lang = 'ar-SA';
       speechSynthesis.speak(speech);
-      setMessage({ type: 'success', text: 'جاري تشغيل الصوت... 🔊' });
+      showToast('جاري تشغيل الصوت...', 'info');
     } catch (error) {
-      setMessage({ type: 'error', text: `خطأ: ${(error as Error).message}` });
+      showToast(`خطأ: ${(error as Error).message}`, 'error');
     }
   };
 
