@@ -13,6 +13,7 @@ import { FileHistory } from '@/components/FileHistory';
 import { HeroSection } from '@/components/HeroSection';
 import { FeatureCards } from '@/components/FeatureCards';
 import { useToast } from '@/contexts/ToastContext';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 /**
  * AI Video Studio Pro - Enhanced UI Version
@@ -434,7 +435,15 @@ export default function HomeImproved() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-8 transition-colors duration-300" style={{
+      background: 'linear-gradient(to bottom right, var(--background), var(--card))',
+      color: 'var(--foreground)',
+    }}>
+      {/* Theme Toggle Button */}
+      <div className="max-w-7xl mx-auto mb-8 flex justify-end">
+        <ThemeToggle />
+      </div>
+
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto mb-12">
         <HeroSection />
@@ -453,7 +462,7 @@ export default function HomeImproved() {
               🎬 AI Video Studio Pro
             </span>
           </h1>
-          <p className="text-xl text-slate-300 mb-2">
+          <p className="text-xl mb-2" style={{ color: 'var(--muted-foreground)' }}>
             أداة احترافية لتحويل النصوص والصور إلى فيديوهات وصور متحركة
           </p>
           <p className="text-sm text-slate-400 mb-6">
