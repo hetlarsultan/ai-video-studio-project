@@ -20,6 +20,10 @@ export const ThemeToggle: React.FC = () => {
   // تطبيق الموضوع
   const applyTheme = (dark: boolean) => {
     const html = document.documentElement;
+    
+    // Add transition class for smooth color changes
+    html.classList.add('theme-transitioning');
+    
     if (dark) {
       html.classList.add('dark');
       html.classList.remove('light');
@@ -29,6 +33,12 @@ export const ThemeToggle: React.FC = () => {
       html.classList.add('light');
       html.style.colorScheme = 'light';
     }
+    
+    // Remove transition class after animation completes
+    setTimeout(() => {
+      html.classList.remove('theme-transitioning');
+    }, 300);
+    
     localStorage.setItem('theme', dark ? 'dark' : 'light');
   };
 

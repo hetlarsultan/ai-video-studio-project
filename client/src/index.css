@@ -138,9 +138,44 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    /* Smooth transitions for theme changes */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
   body {
     @apply bg-background text-foreground;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Faster transitions for interactive elements */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    transition: all 0.2s ease;
+  }
+  
+  /* Smooth transitions for cards and containers */
+  .card,
+  [role="region"],
+  .container {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  /* Smooth transitions for text elements */
+  h1, h2, h3, h4, h5, h6, p, span, label {
+    transition: color 0.3s ease;
+  }
+  
+  /* Smooth transitions for input elements */
+  input,
+  textarea,
+  select {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -152,6 +187,7 @@
   input[type="checkbox"]:not(:disabled),
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
+    transition: all 0.2s ease;
   }
 }
 

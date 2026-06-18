@@ -500,3 +500,167 @@ textarea.textarea-animated:focus {
 .animate-slideInRight {
   animation: slideInRight 0.3s ease-out forwards;
 }
+
+
+/* ============================================
+   Theme Transition Effects
+   ============================================ */
+
+/* Smooth color transition for theme changes */
+@keyframes themeTransition {
+  0% {
+    opacity: 0.95;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Theme toggle smooth transition */
+.theme-transitioning {
+  animation: themeTransition 0.3s ease-in-out;
+}
+
+/* Smooth background transition */
+.bg-transition {
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              background-image 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth text color transition */
+.text-transition {
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth border color transition */
+.border-transition {
+  transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth shadow transition */
+.shadow-transition {
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Combined smooth transition for all properties */
+.smooth-transition {
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              background-image 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transition for gradient backgrounds */
+.gradient-transition {
+  transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transition for opacity */
+.opacity-transition {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transition for transform */
+.transform-transition {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transition for all interactive elements during theme change */
+button,
+a,
+input,
+textarea,
+select,
+[role="button"] {
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transition for cards and containers */
+.card,
+[role="region"],
+.container,
+.modal,
+.dialog {
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transition for headings and text */
+h1, h2, h3, h4, h5, h6,
+p, span, label,
+.text-content {
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transition for icons */
+svg,
+.icon {
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transition for backgrounds with gradients */
+.gradient-bg {
+  transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transition for disabled states */
+:disabled,
+[aria-disabled="true"] {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transition for focus states */
+:focus,
+:focus-visible {
+  transition: outline-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .smooth-transition,
+  .bg-transition,
+  .text-transition,
+  .border-transition,
+  .shadow-transition,
+  .gradient-transition,
+  .opacity-transition,
+  .transform-transition,
+  .theme-transitioning,
+  button,
+  a,
+  input,
+  textarea,
+  select,
+  [role="button"],
+  .card,
+  [role="region"],
+  .container,
+  .modal,
+  .dialog,
+  h1, h2, h3, h4, h5, h6,
+  p, span, label,
+  svg,
+  .icon,
+  .gradient-bg,
+  :disabled,
+  [aria-disabled="true"],
+  :focus,
+  :focus-visible {
+    transition-duration: 0.01ms !important;
+  }
+}

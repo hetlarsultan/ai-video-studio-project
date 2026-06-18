@@ -279,3 +279,12 @@
 - [x] تحديث HomeImproved.tsx لاستخدام CSS variables
 - [x] إضافة اختبارات ThemeToggle (10 اختبارات)
 - [x] جميع 142 اختبار تمر بنجاح
+
+
+## إضافة تأثيرات انتقال سلسة (Smooth Transitions)
+- [x] إضافة CSS transitions لجميع الألوان والخلفيات
+- [x] إضافة transitions للنصوص والعناصر
+- [x] إضافة transitions للأزرار والعناصر التفاعلية
+- [x] إضافة transitions للبطاقات والحاويات
+- [x] تحديث ThemeToggle لتطبيق transitions
+- [x] اختبار الانتقالات السلسة في المتصفح (10 اختبارات مررب بنجاح)

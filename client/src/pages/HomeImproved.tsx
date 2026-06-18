@@ -435,7 +435,7 @@ export default function HomeImproved() {
   };
 
   return (
-    <div className="min-h-screen p-4 md:p-8 transition-colors duration-300" style={{
+    <div className="min-h-screen p-4 md:p-8 smooth-transition" style={{
       background: 'linear-gradient(to bottom right, var(--background), var(--card))',
       color: 'var(--foreground)',
     }}>
