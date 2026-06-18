@@ -6,8 +6,36 @@
 @import './styles/animations.css';
 @import './styles/layout-improvements.css';
 @import './styles/responsive-performance.css';
+@import './styles/responsive.css';
 
 @custom-variant dark (&:is(.dark *));
+
+/* Multi-Platform Responsive Support */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Prevent layout shift */
+html {
+  overflow-y: scroll;
+}
+
+/* Optimize font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Touch action optimization */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

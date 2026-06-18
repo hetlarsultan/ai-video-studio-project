@@ -7,7 +7,13 @@
     <!-- Viewport للأجهزة المحمولة والأندرويد -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, shrink-to-fit=no" />
+    
+    <!-- Color Scheme Support -->
+    <meta name="color-scheme" content="light dark" />
+    
+    <!-- Safe Area Support -->
+    <meta name="viewport-fit" content="cover" />
     
     <!-- CORS Headers -->
     <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin" />
@@ -15,14 +21,27 @@
     
     <!-- Theme Color للأندرويد -->
     <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a" />
+    
+    <!-- Web App Capabilities -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="AI Video Studio" />
+    <meta name="application-name" content="AI Video Studio" />
+    <meta name="msapplication-starturl" content="/" />
+    <meta name="msapplication-window" content="width=device-width;height=device-height" />
     
-    <!-- Status Bar للأندرويد -->
+    <!-- Windows Specific -->
     <meta name="msapplication-TileColor" content="#0f172a" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
+    <meta name="msapplication-navbutton-color" content="#0f172a" />
+    
+    <!-- Format Detection -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="format-detection" content="address=no" />
     
     <!-- Title و Description -->
     <title>AI Video Studio Pro - أداة تحويل الفيديو والصور</title>
@@ -36,28 +55,57 @@
     <!-- Preconnect للأداء -->
     <link rel="preconnect" href="https://api.manus.im" />
     <link rel="dns-prefetch" href="https://api.manus.im" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Performance Hints -->
+    <link rel="prefetch" href="/manifest.json" />
     
     <!-- Web App Manifest -->
     <link rel="manifest" href="/manifest.json" />
     
     <!-- Icons للأندرويد والويب -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
     
     <!-- FFmpeg WASM -->
     <script src="/ffmpeg/ffmpeg.min.js"></script>
     
     <!-- GIF.js -->
     <script src="/ffmpeg/gif.min.js"></script>
+    
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="/src/styles/responsive.css" />
   </head>
 
   <body>
+    <!-- Prevent layout shift -->
+    <noscript>
+      <p>يرجى تفعيل JavaScript لاستخدام هذا التطبيق</p>
+    </noscript>
+    
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Analytics -->
     <script
       defer
       src="%VITE_ANALYTICS_ENDPOINT%/umami"
       data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
+    
+    <!-- Performance Monitoring -->
+    <script>
+      if ('PerformanceObserver' in window) {
+        const observer = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            console.log('Performance:', entry.name, entry.duration);
+          }
+        });
+        observer.observe({ entryTypes: ['navigation', 'resource', 'paint'] });
+      }
+    </script>
   </body>
 
 </html>
