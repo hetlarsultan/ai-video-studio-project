@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { LucideIcon, Loader2 } from 'lucide-react';
-import { Tooltip } from './Tooltip';
+import Tooltip from './Tooltip';
 
 interface FileProcessingCardProps {
   icon: LucideIcon;

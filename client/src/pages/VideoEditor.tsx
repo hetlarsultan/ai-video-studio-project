@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { useLocation, useRoute } from 'wouter';
 import DashboardLayout from '@/components/DashboardLayout';
-import { DownloadButton } from '@/components/DownloadButton';
+import DownloadButton from '@/components/DownloadButton';
 import VisualEffects from '@/components/VisualEffects';
 import TrimCut from '@/components/TrimCut';
 import { useAutoSave } from '@/hooks/useAutoSave';

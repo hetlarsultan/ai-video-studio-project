@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Download, Trash2, Calendar } from 'lucide-react';
-import { Tooltip } from '@/components/Tooltip';
+import Tooltip from '@/components/Tooltip';
 import { useToast } from '@/contexts/ToastContext';
 
 export interface ProcessedFile {

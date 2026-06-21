@@ -6,14 +6,14 @@ import { useFFmpegLoader } from '@/hooks/useFFmpegLoader';
 import { useVideoEditorGestures } from '@/hooks/useVideoEditorGestures';
 import FileProcessingCard from '@/components/FileProcessingCard';
 import OutputSection from '@/components/OutputSection';
-import { Tooltip } from '@/components/Tooltip';
-import { ProgressBar } from '@/components/ProgressBar';
-import { LoadingAnimation } from '@/components/LoadingAnimation';
-import { FileHistory } from '@/components/FileHistory';
-import { HeroSection } from '@/components/HeroSection';
-import { FeatureCards } from '@/components/FeatureCards';
+import Tooltip from '@/components/Tooltip';
+import ProgressBar from '@/components/ProgressBar';
+import LoadingAnimation from '@/components/LoadingAnimation';
+import FileHistory from '@/components/FileHistory';
+import HeroSection from '@/components/HeroSection';
+import FeatureCards from '@/components/FeatureCards';
 import { useToast } from '@/contexts/ToastContext';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import ThemeToggle from '@/components/ThemeToggle';
 
 /**
  * AI Video Studio Pro - Enhanced UI Version

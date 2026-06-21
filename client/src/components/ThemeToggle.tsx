@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Moon, Sun, Monitor } from 'lucide-react';
-import { Tooltip } from '@/components/Tooltip';
+import Tooltip from '@/components/Tooltip';
 import { useSystemTheme, type ThemeMode } from '@/hooks/useSystemTheme';
 
 export const ThemeToggle: React.FC = () => {
