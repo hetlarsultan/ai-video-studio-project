@@ -190,7 +190,7 @@ export function generateAnimatedBackground(
  * Apply visual effects to text
  */
 export function applyTextEffects(
-  _text: string,
+  text: string,
   effects: string[]
 ): { style: string; className: string } {
   let style = "";
@@ -244,7 +244,7 @@ export function calculateFrames(durationSeconds: number, fps: number = 30): numb
  */
 export function generateTransition(
   fromScene: SceneDescription,
-  _toScene: SceneDescription,
+  toScene: SceneDescription,
   transitionDuration: number = 1
 ): SceneDescription {
   return {
@@ -326,7 +326,7 @@ export async function createAnimatedSequence(
 
     for (let i = 0; i < frameCount; i++) {
       // Create frame with animation progress
-      // const progress = i / frameCount;
+      const progress = i / frameCount;
       // This would be implemented with canvas or similar
       // For now, returning placeholder
       frames.push(Buffer.from(""));

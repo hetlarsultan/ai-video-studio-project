@@ -4,25 +4,16 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { ConnectionProvider } from "./contexts/ConnectionContext";
-import ConnectionToggle from "./components/ConnectionToggle";
-import ProgressBar from "./components/ProgressBar";
-import { FFmpegLoadingIndicator } from "./components/FFmpegLoadingIndicator";
-import Home from "./pages/HomeImproved";
-// import Home from "./pages/Home"; // Original version available for fallback
+import Home from "./pages/Home";
 import { TemplatesPage } from "./pages/TemplatesPage";
-import Dashboard from "./pages/Dashboard";
-import VideoEditor from "./pages/VideoEditor";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/editor/:id" component={VideoEditor} />
-      <Route path="/templates" component={TemplatesPage} />
-      <Route path="/404" component={NotFound} />
+      <Route path={"/"} component={Home} />
+      <Route path={"/templates"} component={TemplatesPage} />
+      <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
@@ -36,19 +27,14 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ConnectionProvider>
-        <ThemeProvider
-          defaultTheme="dark"
-        >
-          <TooltipProvider>
-            <Toaster />
-            <ProgressBar />
-            <FFmpegLoadingIndicator />
-            <Router />
-            <ConnectionToggle />
-          </TooltipProvider>
-        </ThemeProvider>
-      </ConnectionProvider>
+      <ThemeProvider
+        defaultTheme="dark"
+      >
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

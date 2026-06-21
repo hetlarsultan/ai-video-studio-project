@@ -7,7 +7,6 @@ import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
 import "./index.css";
-import { ToastProvider } from "./contexts/ToastContext";
 
 const queryClient = new QueryClient();
 
@@ -47,9 +46,6 @@ const trpcClient = trpc.createClient({
         return globalThis.fetch(input, {
           ...(init ?? {}),
           credentials: "include",
-        }).catch(error => {
-          console.error('[TRPC Fetch Error]', error);
-          throw error;
         });
       },
     }),
@@ -59,9 +55,7 @@ const trpcClient = trpc.createClient({
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <App />
-      </ToastProvider>
+      <App />
     </QueryClientProvider>
   </trpc.Provider>
 );

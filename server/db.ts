@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, templates, projects, type InsertProject } from "../drizzle/schema";
+import { InsertUser, users, templates } from "../drizzle/schema";
 import { desc, sql } from "drizzle-orm";
 import { ENV } from './_core/env';
 
@@ -117,35 +117,63 @@ export async function insertTemplate(template: typeof templates.$inferInsert) {
   return db.insert(templates).values(template);
 }
 
-// Projects functions
-export async function createProject(project: InsertProject) {
+// Project management functions
+import { projects, InsertProject, Project } from "../drizzle/schema";
+
+export async function createProject(data: Omit<InsertProject, 'createdAt' | 'updatedAt'>) {
   const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  const result = await db.insert(projects).values(project);
+  if (!db) {
+    throw new Error("Database not available");
+  }
+  
+  const result = await db.insert(projects).values({
+    ...data,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+  
   return result;
 }
 
 export async function getProjectsByUserId(userId: number) {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(projects).where(eq(projects.userId, userId)).orderBy(desc(projects.updatedAt));
+  
+  return db.select().from(projects)
+    .where(eq(projects.userId, userId))
+    .orderBy(desc(projects.createdAt));
 }
 
 export async function getProjectById(id: number) {
   const db = await getDb();
   if (!db) return null;
-  const results = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+  
+  const results = await db.select().from(projects)
+    .where(eq(projects.id, id))
+    .limit(1);
+  
   return results[0] || null;
 }
 
 export async function updateProject(id: number, data: Partial<InsertProject>) {
   const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  return db.update(projects).set(data).where(eq(projects.id, id));
+  if (!db) {
+    throw new Error("Database not available");
+  }
+  
+  return db.update(projects)
+    .set({
+      ...data,
+      updatedAt: new Date(),
+    })
+    .where(eq(projects.id, id));
 }
 
 export async function deleteProject(id: number) {
   const db = await getDb();
-  if (!db) throw new Error("Database not available");
+  if (!db) {
+    throw new Error("Database not available");
+  }
+  
   return db.delete(projects).where(eq(projects.id, id));
 }

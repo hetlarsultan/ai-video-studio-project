@@ -1,6 +1,6 @@
 import { publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
-import { getTemplates, getTemplateById, incrementTemplateUsage } from "./db";
+import { getTemplates, getTemplateById, incrementTemplateUsage, insertTemplate } from "./db";
 
 /**
  * Template Management Router
@@ -17,7 +17,7 @@ export const templateRouter = router({
         includePremium: z.boolean().optional().default(false),
       })
     )
-    .query(async ({ input }: { input: { category?: string; includePremium: boolean } }) => {
+    .query(async ({ input }) => {
       try {
         const allTemplates = await getTemplates();
         
@@ -62,7 +62,7 @@ export const templateRouter = router({
    */
   getTemplate: publicProcedure
     .input(z.object({ id: z.number() }))
-    .query(async ({ input }: { input: { id: number } }) => {
+    .query(async ({ input }) => {
       try {
         const template = await getTemplateById(input.id);
         
@@ -113,7 +113,7 @@ export const templateRouter = router({
    */
   getTemplatesByCategory: publicProcedure
     .input(z.object({ category: z.string() }))
-    .query(async ({ input }: { input: { category: string } }) => {
+    .query(async ({ input }) => {
       try {
         const allTemplates = await getTemplates();
         const filtered = allTemplates.filter(t => t.category === input.category);
@@ -167,7 +167,7 @@ export const templateRouter = router({
    */
   getPopularTemplates: publicProcedure
     .input(z.object({ limit: z.number().min(1).max(50).optional().default(10) }))
-    .query(async ({ input }: { input: { limit: number } }) => {
+    .query(async ({ input }) => {
       try {
         const allTemplates = await getTemplates();
         const sorted = allTemplates

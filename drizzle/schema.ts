@@ -41,7 +41,7 @@ export const templates = mysqlTable("templates", {
 
 export type Template = typeof templates.$inferSelect;
 export type InsertTemplate = typeof templates.$inferInsert;
-// Video Projects table
+
 export const projects = mysqlTable("projects", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),

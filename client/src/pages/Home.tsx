@@ -1,11 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Loader2, Film, Wand2, Volume2, AlertCircle, CheckCircle2, Zap, ImageIcon, Download, Eye } from 'lucide-react';
+import { Loader2, Film, Image, Wand2, Volume2, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
-import { useFFmpegLoader } from '@/hooks/useFFmpegLoader';
-import { useVideoEditorGestures } from '@/hooks/useVideoEditorGestures';
-import VideoPreview from '@/components/VideoPreview';
 
 /**
  * AI Video Studio Pro - Advanced Edition
@@ -21,40 +18,6 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [activeTab, setActiveTab] = useState<'basic' | 'advanced'>('basic');
-  const [_currentEditorStep, setCurrentEditorStep] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-
-  // ربط إيماءات اللمس مع عمليات الفيديو
-  useVideoEditorGestures(
-    {
-      onNextStep: () => setCurrentEditorStep(prev => prev + 1),
-      onPreviousStep: () => setCurrentEditorStep(prev => Math.max(0, prev - 1)),
-      onPlayPause: () => setIsPlaying(!isPlaying),
-      onMuteUnmute: () => setIsMuted(!isMuted),
-      onResetVideo: () => {
-        setCurrentEditorStep(0);
-        setIsPlaying(false);
-      },
-      onExportVideo: () => {
-        setMessage({ type: 'success', text: 'جاري تصدير الفيديو...' });
-      },
-    },
-    {
-      enableSwipe: true,
-      enableDoubleTap: true,
-      enableLongPress: true,
-    }
-  );
-  
-  // حالات المعاينة
-  const [showPreview, setShowPreview] = useState(false);
-  const [previewData, setPreviewData] = useState<{
-    videoUrl: string;
-    startTime: number;
-    endTime: number;
-    onConfirm: () => void;
-  } | null>(null);
   
   const textToVideoRef = useRef<HTMLTextAreaElement>(null);
   const imagesToVideoRef = useRef<HTMLInputElement>(null);
@@ -66,68 +29,42 @@ export default function Home() {
 
   const ffmpegRef = useRef<any>(null);
 
-  // استخدام FFmpeg محلياً
-  useFFmpegLoader({
-    useLocal: true,
-    onReady: () => setFfmpegReady(true),
-    onError: (error) => {
-      console.error('FFmpeg Error:', error);
-      setMessage({ type: 'error', text: 'خطأ في تحميل FFmpeg' });
-    },
-  });
-
   // Advanced API calls
   const generateAdvancedVideo = trpc.advanced.video.generateAdvancedVideo.useMutation();
+  const generateVideoWithEffects = trpc.advanced.video.generateVideoWithEffects.useMutation();
   const generateVideoFromImages = trpc.advanced.image.generateVideoFromImages.useMutation();
+  const applyKenBurnsEffect = trpc.advanced.image.applyKenBurnsEffect.useMutation();
   const synthesizeSpeech = trpc.advanced.audio.synthesizeSpeech.useMutation();
+  const synchronizeAudioVideo = trpc.advanced.audio.synchronizeAudioVideo.useMutation();
 
   // Initialize FFmpeg
   useEffect(() => {
     const initFFmpeg = async () => {
-      let retries = 0;
-      const maxRetries = 3;
-      
-      while (retries < maxRetries) {
-        try {
-          let FFmpeg = (window as any).FFmpeg;
-          if (!FFmpeg) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-            FFmpeg = (window as any).FFmpeg;
-          }
-          
-          if (!FFmpeg) {
-            throw new Error('FFmpeg library not available');
-          }
-
-          const { createFFmpeg } = FFmpeg;
-          if (!createFFmpeg) {
-            throw new Error('createFFmpeg function not found');
-          }
-          
-          const ffmpeg = createFFmpeg({
-            log: true,
-            corePath: '/ffmpeg/ffmpeg-core.js',
-            progress: ({ ratio }: { ratio: number }) => {
-              setProgress(Math.round(ratio * 100));
-            },
-          });
-
-          ffmpegRef.current = ffmpeg;
-
-          if (!ffmpeg.isLoaded()) {
-            await ffmpeg.load();
-          }
-          setFfmpegReady(true);
-          setMessage({ type: 'success', text: 'تم تحميل النظام بنجاح ✅' });
+      try {
+        const FFmpeg = (window as any).FFmpeg;
+        if (!FFmpeg) {
+          setMessage({ type: 'error', text: 'فشل تحميل FFmpeg' });
           return;
-        } catch (error) {
-          retries++;
-          if (retries >= maxRetries) {
-            setMessage({ type: 'error', text: `خطأ في التحميل: ${(error as Error).message}` });
-          } else {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          }
         }
+
+        const { createFFmpeg, fetchFile } = FFmpeg;
+        const ffmpeg = createFFmpeg({
+          log: true,
+          corePath: '/ffmpeg/ffmpeg-core.js',
+          progress: ({ ratio }: { ratio: number }) => {
+            setProgress(Math.round(ratio * 100));
+          },
+        });
+
+        ffmpegRef.current = ffmpeg;
+
+        if (!ffmpeg.isLoaded()) {
+          await ffmpeg.load();
+        }
+        setFfmpegReady(true);
+        setMessage({ type: 'success', text: 'تم تحميل النظام بنجاح ✅' });
+      } catch (error) {
+        setMessage({ type: 'error', text: `خطأ في التحميل: ${(error as Error).message}` });
       }
     };
 
@@ -190,6 +127,11 @@ export default function Home() {
       });
 
       if (result.success) {
+        // Apply Ken Burns effect
+      const kenBurnsResult = await applyKenBurnsEffect.mutateAsync({
+        duration: result.totalDuration as number,
+        zoomLevel: 1.2 as number,
+      });
 
         setMessage({ 
           type: 'success', 
@@ -398,7 +340,7 @@ export default function Home() {
       let loaded = 0;
 
       Array.from(files).forEach((file) => {
-        const img = document.createElement('img');
+        const img = new (Image as any)();
         img.src = URL.createObjectURL(file);
 
         img.onload = () => {
@@ -539,37 +481,18 @@ export default function Home() {
                 {isLoading ? 'جاري المعالجة...' : 'إنشاء فيديو'}
               </Button>
               {videoOutputRef && (
-                <div className="mt-4 space-y-3">
-                  <video
-                    ref={videoOutputRef}
-                    controls
-                    className="w-full rounded-lg bg-black"
-                  />
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => {
-                        const video = videoOutputRef.current;
-                        if (video && video.src) {
-                          const link = document.createElement('a');
-                          link.href = video.src;
-                          link.download = 'video.mp4';
-                          link.click();
-                        }
-                      }}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
-                    >
-                      <Download className="w-4 h-4" />
-                      تنزيل الفيديو
-                    </Button>
-                  </div>
-                </div>
+                <video
+                  ref={videoOutputRef}
+                  controls
+                  className="w-full mt-4 rounded-lg bg-black"
+                />
               )}
             </Card>
 
             {/* Images to Video - Basic */}
             <Card className="bg-slate-800/50 border-slate-700 p-6 hover:border-cyan-500/50 transition-colors">
               <div className="flex items-center gap-3 mb-4">
-                <ImageIcon className="w-6 h-6 text-cyan-400" />
+                <Image className="w-6 h-6 text-cyan-400" />
                 <h2 className="text-2xl font-bold">تحويل الصور إلى فيديو</h2>
               </div>
               <input
@@ -588,37 +511,18 @@ export default function Home() {
                 {isLoading ? 'جاري المعالجة...' : 'إنشاء فيديو'}
               </Button>
               {videoFromImagesRef && (
-                <div className="mt-4 space-y-3">
-                  <video
-                    ref={videoFromImagesRef}
-                    controls
-                    className="w-full rounded-lg bg-black"
-                  />
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => {
-                        const video = videoFromImagesRef.current;
-                        if (video && video.src) {
-                          const link = document.createElement('a');
-                          link.href = video.src;
-                          link.download = 'video-from-images.mp4';
-                          link.click();
-                        }
-                      }}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
-                    >
-                      <Download className="w-4 h-4" />
-                      تنزيل الفيديو
-                    </Button>
-                  </div>
-                </div>
+                <video
+                  ref={videoFromImagesRef}
+                  controls
+                  className="w-full mt-4 rounded-lg bg-black"
+                />
               )}
             </Card>
 
             {/* Images to GIF */}
             <Card className="bg-slate-800/50 border-slate-700 p-6 hover:border-cyan-500/50 transition-colors">
               <div className="flex items-center gap-3 mb-4">
-                <ImageIcon className="w-6 h-6 text-cyan-400" />
+                <Wand2 className="w-6 h-6 text-cyan-400" />
                 <h2 className="text-2xl font-bold">تحويل الصور إلى GIF</h2>
               </div>
               <input
@@ -637,42 +541,11 @@ export default function Home() {
                 {isLoading ? 'جاري المعالجة...' : 'إنشاء GIF'}
               </Button>
               {gifOutputRef && (
-                <div className="mt-4 space-y-3">
-                  <img
-                    ref={gifOutputRef}
-                    className="w-full rounded-lg bg-black"
-                    alt="GIF Output"
-                  />
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => {
-                        const gif = gifOutputRef.current;
-                        if (gif && gif.src) {
-                          const link = document.createElement('a');
-                          link.href = gif.src;
-                          link.download = 'animation.gif';
-                          link.click();
-                        }
-                      }}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
-                    >
-                      <Download className="w-4 h-4" />
-                      تنزيل GIF
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        const gif = gifOutputRef.current;
-                        if (gif && gif.src) {
-                          window.open(gif.src, '_blank');
-                        }
-                      }}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
-                    >
-                      <Eye className="w-4 h-4" />
-                      معاينة
-                    </Button>
-                  </div>
-                </div>
+                <img
+                  ref={gifOutputRef}
+                  className="w-full mt-4 rounded-lg bg-black"
+                  alt="GIF Output"
+                />
               )}
             </Card>
 
@@ -719,37 +592,6 @@ export default function Home() {
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Zap className="w-4 h-4 mr-2" />}
                 {isLoading ? 'جاري المعالجة...' : 'إنشاء فيديو متقدم'}
               </Button>
-              {videoOutputRef && (
-                <div className="flex gap-2 mt-3">
-                  <Button
-                    onClick={() => {
-                      const video = videoOutputRef.current;
-                      if (video && video.src) {
-                        window.open(video.src, '_blank');
-                      }
-                    }}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
-                  >
-                    <Eye className="w-4 h-4" />
-                    معاينة
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      const video = videoOutputRef.current;
-                      if (video && video.src) {
-                        const link = document.createElement('a');
-                        link.href = video.src;
-                        link.download = 'advanced-video.mp4';
-                        link.click();
-                      }
-                    }}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    تنزيل
-                  </Button>
-                </div>
-              )}
               <p className="text-xs text-slate-400 mt-2">✨ مع مشاهد متحركة وصوت متزامن</p>
             </Card>
 
@@ -775,37 +617,6 @@ export default function Home() {
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Zap className="w-4 h-4 mr-2" />}
                 {isLoading ? 'جاري المعالجة...' : 'إنشاء فيديو متقدم'}
               </Button>
-              {videoFromImagesRef && (
-                <div className="flex gap-2 mt-3">
-                  <Button
-                    onClick={() => {
-                      const video = videoFromImagesRef.current;
-                      if (video && video.src) {
-                        window.open(video.src, '_blank');
-                      }
-                    }}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
-                  >
-                    <Eye className="w-4 h-4" />
-                    معاينة
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      const video = videoFromImagesRef.current;
-                      if (video && video.src) {
-                        const link = document.createElement('a');
-                        link.href = video.src;
-                        link.download = 'advanced-video-from-images.mp4';
-                        link.click();
-                      }
-                    }}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    تنزيل
-                  </Button>
-                </div>
-              )}
               <p className="text-xs text-slate-400 mt-2">✨ مع تأثير Ken Burns والحركات الواقعية</p>
             </Card>
 
@@ -847,23 +658,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* مكون معاينة الفيديو */}
-      {showPreview && previewData && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <VideoPreview
-            videoUrl={previewData.videoUrl}
-            startTime={previewData.startTime}
-            endTime={previewData.endTime}
-            onConfirm={previewData.onConfirm}
-            onCancel={() => {
-              setShowPreview(false);
-              setPreviewData(null);
-            }}
-            isLoading={isLoading}
-          />
-        </div>
-      )}
-      
       {/* Footer */}
       <div className="max-w-7xl mx-auto mt-12 text-center text-slate-400 text-sm">
         <p>جميع المعالجات تتم محليًا في المتصفح - لا توجد تحميلات على الخادم - مجاني 100%</p>

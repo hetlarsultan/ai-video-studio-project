@@ -1,41 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "./mobile.css";
-@import "./gestures.css";
-@import './styles/ui-enhancements.css';
-@import './styles/animations.css';
-@import './styles/layout-improvements.css';
-@import './styles/responsive-performance.css';
-@import './styles/responsive.css';
 
 @custom-variant dark (&:is(.dark *));
-
-/* Multi-Platform Responsive Support */
-@supports (padding: max(0px)) {
-  body {
-    padding-left: max(1rem, env(safe-area-inset-left));
-    padding-right: max(1rem, env(safe-area-inset-right));
-    padding-top: max(1rem, env(safe-area-inset-top));
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
-  }
-}
-
-/* Prevent layout shift */
-html {
-  overflow-y: scroll;
-}
-
-/* Optimize font rendering */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-
-/* Touch action optimization */
-button, a, input, select, textarea {
-  touch-action: manipulation;
-}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -77,24 +43,15 @@ button, a, input, select, textarea {
 }
 
 :root {
-  /* Gradient Colors: Cyan → Blue → Purple */
-  --primary: #06b6d4;           /* Cyan */
+  --primary: #06b6d4;
   --primary-foreground: #0f172a;
-  --primary-light: #22d3ee;     /* Light Cyan */
-  --primary-dark: #0891b2;      /* Dark Cyan */
-  --secondary: #3b82f6;         /* Blue */
-  --secondary-light: #60a5fa;   /* Light Blue */
-  --secondary-dark: #1d4ed8;    /* Dark Blue */
-  --tertiary: #8b5cf6;          /* Purple */
-  --tertiary-light: #a78bfa;    /* Light Purple */
-  --tertiary-dark: #6d28d9;     /* Dark Purple */
   --sidebar-primary: #0891b2;
   --sidebar-primary-foreground: #f0f9ff;
-  --chart-1: #06b6d4;           /* Cyan */
-  --chart-2: #0ea5e9;           /* Sky Blue */
-  --chart-3: #3b82f6;           /* Blue */
-  --chart-4: #6366f1;           /* Indigo */
-  --chart-5: #8b5cf6;           /* Purple */
+  --chart-1: #06b6d4;
+  --chart-2: #0ea5e9;
+  --chart-3: #3b82f6;
+  --chart-4: #6366f1;
+  --chart-5: #8b5cf6;
   --radius: 0.65rem;
   --background: #0f172a;
   --foreground: #f1f5f9;
@@ -102,15 +59,17 @@ button, a, input, select, textarea {
   --card-foreground: #f1f5f9;
   --popover: #1e293b;
   --popover-foreground: #f1f5f9;
+  --secondary: #475569;
+  --secondary-foreground: #f1f5f9;
   --muted: #334155;
   --muted-foreground: #cbd5e1;
-  --accent: #06b6d4;            /* Cyan */
+  --accent: #06b6d4;
   --accent-foreground: #0f172a;
   --destructive: #ef4444;
   --destructive-foreground: #fafafa;
   --border: #334155;
   --input: #1e293b;
-  --ring: #06b6d4;              /* Cyan */
+  --ring: #06b6d4;
   --sidebar: #1e293b;
   --sidebar-foreground: #f1f5f9;
   --sidebar-accent: #06b6d4;
@@ -120,17 +79,8 @@ button, a, input, select, textarea {
 }
 
 .dark {
-  /* Gradient Colors: Cyan → Blue → Purple */
-  --primary: #06b6d4;           /* Cyan */
+  --primary: #06b6d4;
   --primary-foreground: #0f172a;
-  --primary-light: #22d3ee;     /* Light Cyan */
-  --primary-dark: #0891b2;      /* Dark Cyan */
-  --secondary: #3b82f6;         /* Blue */
-  --secondary-light: #60a5fa;   /* Light Blue */
-  --secondary-dark: #1d4ed8;    /* Dark Blue */
-  --tertiary: #8b5cf6;          /* Purple */
-  --tertiary-light: #a78bfa;    /* Light Purple */
-  --tertiary-dark: #6d28d9;     /* Dark Purple */
   --sidebar-primary: #0891b2;
   --sidebar-primary-foreground: #f0f9ff;
   --background: #0f172a;
@@ -139,11 +89,11 @@ button, a, input, select, textarea {
   --card-foreground: #f1f5f9;
   --popover: #1e293b;
   --popover-foreground: #f1f5f9;
-  --secondary: #3b82f6;         /* Blue */
+  --secondary: #475569;
   --secondary-foreground: #f1f5f9;
   --muted: #334155;
   --muted-foreground: #cbd5e1;
-  --accent: #06b6d4;            /* Cyan */
+  --accent: #06b6d4;
   --accent-foreground: #0f172a;
   --destructive: #ef4444;
   --destructive-foreground: #fafafa;
@@ -166,44 +116,9 @@ button, a, input, select, textarea {
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    /* Smooth transitions for theme changes */
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
   body {
     @apply bg-background text-foreground;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  /* Faster transitions for interactive elements */
-  button:not(:disabled),
-  [role="button"]:not([aria-disabled="true"]),
-  [type="button"]:not(:disabled),
-  [type="submit"]:not(:disabled),
-  [type="reset"]:not(:disabled),
-  a[href],
-  select:not(:disabled),
-  input[type="checkbox"]:not(:disabled),
-  input[type="radio"]:not(:disabled) {
-    transition: all 0.2s ease;
-  }
-  
-  /* Smooth transitions for cards and containers */
-  .card,
-  [role="region"],
-  .container {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
-  
-  /* Smooth transitions for text elements */
-  h1, h2, h3, h4, h5, h6, p, span, label {
-    transition: color 0.3s ease;
-  }
-  
-  /* Smooth transitions for input elements */
-  input,
-  textarea,
-  select {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -215,7 +130,6 @@ button, a, input, select, textarea {
   input[type="checkbox"]:not(:disabled),
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
-    transition: all 0.2s ease;
   }
 }
 
@@ -260,48 +174,4 @@ button, a, input, select, textarea {
       max-width: 1280px; /* Standard content width */
     }
   }
-}
-
-
-
-.light {
-  /* Light Mode Colors */
-  --primary: #0891b2;           /* Dark Cyan */
-  --primary-foreground: #f0f9ff;
-  --primary-light: #06b6d4;     /* Cyan */
-  --primary-dark: #164e63;      /* Very Dark Cyan */
-  --secondary: #1d4ed8;         /* Dark Blue */
-  --secondary-light: #3b82f6;   /* Blue */
-  --secondary-dark: #1e3a8a;    /* Very Dark Blue */
-  --tertiary: #6d28d9;          /* Dark Purple */
-  --tertiary-light: #8b5cf6;    /* Purple */
-  --tertiary-dark: #581c87;     /* Very Dark Purple */
-  --sidebar-primary: #0891b2;
-  --sidebar-primary-foreground: #f0f9ff;
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --card: #f1f5f9;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --muted: #cbd5e1;
-  --muted-foreground: #475569;
-  --accent: #0891b2;            /* Dark Cyan */
-  --accent-foreground: #f0f9ff;
-  --destructive: #dc2626;
-  --destructive-foreground: #fafafa;
-  --border: #e2e8f0;
-  --input: #f1f5f9;
-  --ring: #0891b2;
-  --chart-1: #0891b2;
-  --chart-2: #0ea5e9;
-  --chart-3: #1d4ed8;
-  --chart-4: #4f46e5;
-  --chart-5: #6d28d9;
-  --sidebar: #f1f5f9;
-  --sidebar-foreground: #0f172a;
-  --sidebar-accent: #0891b2;
-  --sidebar-accent-foreground: #f0f9ff;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #0891b2;
 }
