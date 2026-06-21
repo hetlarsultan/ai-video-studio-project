@@ -76,7 +76,7 @@ interface TemplateLibraryProps {
   onTemplateSelect?: (template: any) => void;
 }
 
-export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({ onTemplateSelect }) => {
+const TemplateLibrary: React.FC<TemplateLibraryProps> = ({ onTemplateSelect }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Fetch categories
@@ -191,3 +191,5 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({ onTemplateSele
     </div>
   );
 };
+
+export default TemplateLibrary;
