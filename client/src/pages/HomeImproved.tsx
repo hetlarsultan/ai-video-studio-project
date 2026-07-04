@@ -589,13 +589,13 @@ export default function HomeImproved() {
               buttonIcon={Film}
               variant="primary"
               tooltip="اكتب نصاً واضغط لإنشاء فيديو احترافي"
-              onDownload={() => {
+              onDownload={(quality, format) => {
                 if (videoOutputRef.current?.src) {
                   const a = document.createElement('a');
                   a.href = videoOutputRef.current.src;
-                  a.download = 'video-from-text.mp4';
+                  a.download = `video-from-text-${quality.value}${format.extension}`;
                   a.click();
-                  showToast('تم تحميل الفيديو بنجاح', 'success');
+                  showToast(`تم تحميل الفيديو (${quality.label} - ${format.label})`, 'success');
                 }
               }}
               onPreview={() => {
@@ -606,6 +606,7 @@ export default function HomeImproved() {
               }}
               showDownloadBtn={!!videoOutputRef.current?.src}
               showPreviewBtn={!!videoOutputRef.current?.src}
+              showQualitySelector={!!videoOutputRef.current?.src}
               downloadLabel="تحميل الفيديو"
               previewLabel="معاينة الفيديو"
             >
