@@ -589,6 +589,25 @@ export default function HomeImproved() {
               buttonIcon={Film}
               variant="primary"
               tooltip="اكتب نصاً واضغط لإنشاء فيديو احترافي"
+              onDownload={() => {
+                if (videoOutputRef.current?.src) {
+                  const a = document.createElement('a');
+                  a.href = videoOutputRef.current.src;
+                  a.download = 'video-from-text.mp4';
+                  a.click();
+                  showToast('تم تحميل الفيديو بنجاح', 'success');
+                }
+              }}
+              onPreview={() => {
+                if (videoOutputRef.current?.src) {
+                  videoOutputRef.current.play();
+                  showToast('جاري تشغيل المعاينة', 'info');
+                }
+              }}
+              showDownloadBtn={!!videoOutputRef.current?.src}
+              showPreviewBtn={!!videoOutputRef.current?.src}
+              downloadLabel="تحميل الفيديو"
+              previewLabel="معاينة الفيديو"
             >
                 <textarea
                 ref={textToVideoRef}
@@ -610,6 +629,25 @@ export default function HomeImproved() {
               buttonIcon={Film}
               variant="primary"
               tooltip="اختر صوراً واضغط لتحويلها إلى فيديو سلس"
+              onDownload={() => {
+                if (videoFromImagesRef.current?.src) {
+                  const a = document.createElement('a');
+                  a.href = videoFromImagesRef.current.src;
+                  a.download = 'video-from-images.mp4';
+                  a.click();
+                  showToast('تم تحميل الفيديو بنجاح', 'success');
+                }
+              }}
+              onPreview={() => {
+                if (videoFromImagesRef.current?.src) {
+                  videoFromImagesRef.current.play();
+                  showToast('جاري تشغيل المعاينة', 'info');
+                }
+              }}
+              showDownloadBtn={!!videoFromImagesRef.current?.src}
+              showPreviewBtn={!!videoFromImagesRef.current?.src}
+              downloadLabel="تحميل الفيديو"
+              previewLabel="معاينة الفيديو"
             >
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-slate-200">اختر الصور</label>
@@ -635,6 +673,24 @@ export default function HomeImproved() {
               buttonIcon={Wand2}
               variant="secondary"
               tooltip="حول الصور إلى صورة متحركة GIF"
+              onDownload={() => {
+                if (gifOutputRef.current?.src) {
+                  const a = document.createElement('a');
+                  a.href = gifOutputRef.current.src;
+                  a.download = 'animated.gif';
+                  a.click();
+                  showToast('تم تحميل GIF بنجاح', 'success');
+                }
+              }}
+              onPreview={() => {
+                if (gifOutputRef.current?.src) {
+                  showToast('جاري عرض المعاينة', 'info');
+                }
+              }}
+              showDownloadBtn={!!gifOutputRef.current?.src}
+              showPreviewBtn={!!gifOutputRef.current?.src}
+              downloadLabel="تحميل GIF"
+              previewLabel="معاينة GIF"
             >
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-slate-200">اختر الصور</label>
@@ -684,6 +740,25 @@ export default function HomeImproved() {
               buttonLabel="إنشاء فيديو متقدم"
               buttonIcon={Zap}
               variant="primary"
+              onDownload={() => {
+                if (videoOutputRef.current?.src) {
+                  const a = document.createElement('a');
+                  a.href = videoOutputRef.current.src;
+                  a.download = 'advanced-video.mp4';
+                  a.click();
+                  showToast('تم تحميل الفيديو بنجاح', 'success');
+                }
+              }}
+              onPreview={() => {
+                if (videoOutputRef.current?.src) {
+                  videoOutputRef.current.play();
+                  showToast('جاري تشغيل المعاينة', 'info');
+                }
+              }}
+              showDownloadBtn={!!videoOutputRef.current?.src}
+              showPreviewBtn={!!videoOutputRef.current?.src}
+              downloadLabel="تحميل الفيديو"
+              previewLabel="معاينة الفيديو"
             >
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-slate-200">وصف الفيديو</label>
@@ -706,6 +781,25 @@ export default function HomeImproved() {
               buttonLabel="إنشاء فيديو متقدم"
               buttonIcon={Zap}
               variant="primary"
+              onDownload={() => {
+                if (videoFromImagesRef.current?.src) {
+                  const a = document.createElement('a');
+                  a.href = videoFromImagesRef.current.src;
+                  a.download = 'advanced-video-from-images.mp4';
+                  a.click();
+                  showToast('تم تحميل الفيديو بنجاح', 'success');
+                }
+              }}
+              onPreview={() => {
+                if (videoFromImagesRef.current?.src) {
+                  videoFromImagesRef.current.play();
+                  showToast('جاري تشغيل المعاينة', 'info');
+                }
+              }}
+              showDownloadBtn={!!videoFromImagesRef.current?.src}
+              showPreviewBtn={!!videoFromImagesRef.current?.src}
+              downloadLabel="تحميل الفيديو"
+              previewLabel="معاينة الفيديو"
             >
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-slate-200">اختر الصور</label>
